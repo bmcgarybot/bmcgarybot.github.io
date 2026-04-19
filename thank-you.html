@@ -50,7 +50,7 @@ p{line-height:1.7;margin-bottom:20px;opacity:0.9}
         </div>
         
         <a id="paypalBtn" href="https://paypal.me/BrettCoon/24.99" target="_blank" rel="noopener" class="paypal-btn">
-            💳 Pay with PayPal — <span id="payAmount">$24.99</span>
+            💳 Pay with PayPal — <span id="readingLabel"></span><span id="payAmount">$24.99</span>
         </a>
         
         <p class="small">Secure payment via PayPal. You do not need a PayPal account — credit and debit cards accepted.</p>
@@ -76,9 +76,22 @@ const params = new URLSearchParams(window.location.search);
 const reading = params.get('reading');
 if (reading) {
     const prices = {'soul-map':'24.99','love-compatibility':'29.99','career-path':'24.99','year-ahead':'29.99','numerology':'19.99','quick-snapshot':'9.99'};
+    const names = {'soul-map':'The Soul Map','love-compatibility':'Love & Compatibility','career-path':'Career Path','year-ahead':'Year Ahead Forecast','numerology':'Numerology Deep Dive','quick-snapshot':'Quick Cosmic Snapshot'};
     if (prices[reading]) {
         document.getElementById('paypalBtn').href = 'https://paypal.me/BrettCoon/' + prices[reading];
         document.getElementById('payAmount').textContent = '$' + prices[reading];
+        // Highlight the matching price grid item
+        const priceItems = document.querySelectorAll('.price-item');
+        priceItems.forEach(item => {
+            if (item.querySelector('.amt').textContent === '$' + prices[reading]) {
+                item.classList.add('active');
+            }
+        });
+        // Show reading name if available
+        if (names[reading]) {
+            const readingLabel = document.getElementById('readingLabel');
+            if (readingLabel) readingLabel.textContent = names[reading] + ' — ';
+        }
     }
 }
 </script>

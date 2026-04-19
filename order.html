@@ -228,6 +228,15 @@ const READING_PARAM_MAP = {
     'quick-snapshot': 'quick-snapshot'
 };
 
+const READING_PRICES = {
+    'soul-map': '24.99',
+    'love-compatibility': '29.99',
+    'career-path': '24.99',
+    'year-ahead': '29.99',
+    'numerology': '19.99',
+    'quick-snapshot': '9.99'
+};
+
 // Auto-select reading from URL param on page load
 (function() {
     const params = new URLSearchParams(window.location.search);
@@ -254,6 +263,19 @@ function handleReadingChange() {
     });
     const forecastField = document.getElementById('forecastStart');
     forecastField.required = val === 'year-ahead';
+
+    // Update _next redirect to pass reading type to thank-you page
+    const nextField = document.querySelector('input[name="_next"]');
+    if (nextField && val) {
+        nextField.value = 'https://mycosmicsoulmap.com/thank-you.html?reading=' + encodeURIComponent(val);
+    }
+
+    // Update inline PayPal link (shown in AJAX success) with correct price
+    const price = READING_PRICES[val] || '24.99';
+    const paypalLink = document.getElementById('paypalLink');
+    const payAmount = document.getElementById('payAmount');
+    if (paypalLink) paypalLink.href = 'https://paypal.me/BrettCoon/' + price;
+    if (payAmount) payAmount.textContent = '$' + price;
 }
 
 function submitOrder(e) {
