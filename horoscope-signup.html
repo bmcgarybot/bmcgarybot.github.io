@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Daily Horoscope Signup | Cosmic Soul Maps</title>
+    <meta name="description" content="Sign up for a free personalized daily horoscope from Cosmic Soul Maps. Real transit data, delivered to your inbox every morning.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://bmcgarybot.github.io/horoscope-signup.html">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="stars"></div>
+<nav class="nav" id="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">&#10022; Cosmic Soul Maps</a>
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Menu">&#9776;</button>
+        <ul class="nav-links">
+            <li><a href="index.html#readings">Readings</a></li>
+            <li><a href="index.html#how-it-works">How It Works</a></li>
+            <li><a href="index.html#faq">FAQ</a></li>
+            <li><a href="order.html" class="btn btn-primary btn-sm">Order Now</a></li>
+        </ul>
+    </div>
+</nav>
+
+<section class="hero" style="padding:140px 0 60px">
+    <div class="container">
+        <div class="hero-badge">100% Free</div>
+        <h1><span class="gold">&#9734; Daily Horoscope</span></h1>
+        <p class="hero-desc">Start every morning with cosmic insight. Our daily horoscopes use real transit data to give you actionable guidance for the day ahead. Not generic filler. Always free.</p>
+    </div>
+</section>
+
+<section style="padding:0 0 60px">
+<div class="container">
+    <div class="hs" style="max-width:560px;margin:0 auto">
+        <h2 style="font-size:1.6rem;margin-bottom:8px">Sign Up</h2>
+        <p class="subtitle" style="margin-bottom:28px">One email a day. Unsubscribe anytime. That is it.</p>
+
+        <form class="hf" id="horoscopeForm" onsubmit="return submitHoroscope(event)">
+            <div class="fr">
+                <input type="text" name="name" placeholder="Your first name" required>
+            </div>
+            <div class="fr">
+                <input type="email" name="email" placeholder="Email address" required>
+            </div>
+            <div class="fr">
+                <select name="sign" required>
+                    <option value="" disabled selected>Your Sun sign</option>
+                    <option>Aries</option><option>Taurus</option><option>Gemini</option>
+                    <option>Cancer</option><option>Leo</option><option>Virgo</option>
+                    <option>Libra</option><option>Scorpio</option><option>Sagittarius</option>
+                    <option>Capricorn</option><option>Aquarius</option><option>Pisces</option>
+                </select>
+            </div>
+
+            <div class="fr" style="flex-direction:column;gap:4px">
+                <label style="color:var(--text-dim);font-size:.85rem;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;text-align:left">Not sure of your sign? Enter your birthday:</label>
+                <input type="date" name="birthday" id="birthdayField" onchange="autoDetectSign()">
+            </div>
+
+            <button type="submit" class="fsub" id="horoscopeBtn">Sign Up for Free</button>
+            <p class="fnote">No spam, ever. Unsubscribe anytime. Delivered daily at 6 AM MST.</p>
+        </form>
+
+        <div class="fsucc" id="horoscopeSuccess">
+            <h3 style="margin-bottom:8px">&#10024; You are in!</h3>
+            <p>Check your inbox tomorrow morning for your first personalized daily horoscope. Welcome to the Cosmic Soul Maps community.</p>
+            <p style="margin-top:16px"><a href="index.html#readings" style="color:var(--accent-light);text-decoration:none;font-weight:600">Explore our full readings &rarr;</a></p>
+        </div>
+
+        <div class="hperks" style="margin-top:32px">
+            <span>&#10003; 100% Free</span>
+            <span>&#10003; Real Transit Data</span>
+            <span>&#10003; All 12 Signs Daily</span>
+            <span>&#10003; Unsubscribe Anytime</span>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- What you get -->
+<section>
+<div class="container">
+    <div class="section-header">
+        <h2>What You Get</h2>
+        <p>Every morning, a brief email tailored to your sign and the day's actual transits.</p>
+    </div>
+    <div class="why-grid">
+        <div class="why-card">
+            <div class="icon">&#127756;</div>
+            <h4>Real Planetary Transits</h4>
+            <p>We track actual planetary movements, retrogrades, and aspects. Your daily horoscope reflects the real sky, not a random generator.</p>
+        </div>
+        <div class="why-card">
+            <div class="icon">&#9201;</div>
+            <h4>6 AM MST Delivery</h4>
+            <p>Start your day with your horoscope in your inbox. Quick enough to read with your morning coffee. Actionable, not vague.</p>
+        </div>
+        <div class="why-card">
+            <div class="icon">&#128155;</div>
+            <h4>No Strings Attached</h4>
+            <p>Completely free, forever. We will never sell your info. Unsubscribe with one click. We just love sharing the cosmos.</p>
+        </div>
+    </div>
+</div>
+</section>
+
+<!-- CTA to readings -->
+<section>
+<div class="container">
+    <div class="hs" style="max-width:700px;margin:0 auto;background:linear-gradient(135deg,rgba(255,215,0,.05) 0%,rgba(147,112,219,.08) 100%)">
+        <h2 style="font-size:1.5rem;margin-bottom:12px">Want to Go Deeper?</h2>
+        <p class="subtitle" style="margin-bottom:24px">Your daily horoscope is a snapshot. A full reading is the complete picture. Discover your natal chart, career path, love compatibility, and more.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+            <a href="index.html#readings" class="btn btn-primary">Explore Readings</a>
+            <a href="order.html" class="btn btn-gold">Order a Reading</a>
+        </div>
+    </div>
+</div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-links">
+            <a href="index.html#readings">Readings</a>
+            <a href="index.html#faq">FAQ</a>
+            <a href="order.html">Order Form</a>
+            <a href="https://www.etsy.com/shop/CosmicSoulMaps" target="_blank" rel="noopener">Etsy Shop</a>
+            <a href="mailto:bmc.garybot@gmail.com">Contact</a>
+        </div>
+        <p class="footer-copy">&copy; 2026 Cosmic Soul Maps. All readings are for entertainment and self-reflection purposes.<br>Powered by Swiss Ephemeris astronomical calculations.</p>
+    </div>
+</footer>
+
+<script>
+// Auto-detect sun sign from birthday
+function autoDetectSign() {
+    const d = document.getElementById('birthdayField').value;
+    if (!d) return;
+    const date = new Date(d + 'T12:00:00');
+    const m = date.getMonth() + 1;
+    const day = date.getDate();
+    let sign = '';
+    if ((m===3 && day>=21)||(m===4 && day<=19)) sign='Aries';
+    else if ((m===4 && day>=20)||(m===5 && day<=20)) sign='Taurus';
+    else if ((m===5 && day>=21)||(m===6 && day<=20)) sign='Gemini';
+    else if ((m===6 && day>=21)||(m===7 && day<=22)) sign='Cancer';
+    else if ((m===7 && day>=23)||(m===8 && day<=22)) sign='Leo';
+    else if ((m===8 && day>=23)||(m===9 && day<=22)) sign='Virgo';
+    else if ((m===9 && day>=23)||(m===10 && day<=22)) sign='Libra';
+    else if ((m===10 && day>=23)||(m===11 && day<=21)) sign='Scorpio';
+    else if ((m===11 && day>=22)||(m===12 && day<=21)) sign='Sagittarius';
+    else if ((m===12 && day>=22)||(m===1 && day<=19)) sign='Capricorn';
+    else if ((m===1 && day>=20)||(m===2 && day<=18)) sign='Aquarius';
+    else sign='Pisces';
+
+    const sel = document.querySelector('select[name="sign"]');
+    for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === sign) {
+            sel.selectedIndex = i;
+            break;
+        }
+    }
+}
+
+// Form submission
+function submitHoroscope(e) {
+    e.preventDefault();
+    const form = document.getElementById('horoscopeForm');
+    const btn = document.getElementById('horoscopeBtn');
+    const data = Object.fromEntries(new FormData(form));
+
+    btn.disabled = true;
+    btn.textContent = 'Signing up...';
+
+    const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
+
+    if (APPS_SCRIPT_URL === 'PLACEHOLDER_APPS_SCRIPT_URL') {
+        // Store locally until backend is configured
+        const signups = JSON.parse(localStorage.getItem('csm_horoscope_signups') || '[]');
+        signups.push({...data, timestamp: new Date().toISOString()});
+        localStorage.setItem('csm_horoscope_signups', JSON.stringify(signups));
+        console.log('Horoscope signup:', data);
+        form.style.display = 'none';
+        document.getElementById('horoscopeSuccess').style.display = 'block';
+        return false;
+    }
+
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: new FormData(form)
+    }).then(r => r.json()).then(() => {
+        form.style.display = 'none';
+        document.getElementById('horoscopeSuccess').style.display = 'block';
+    }).catch(() => {
+        btn.disabled = false;
+        btn.textContent = 'Sign Up for Free';
+        alert('Something went wrong. Please try again or email us at bmc.garybot@gmail.com');
+    });
+    return false;
+}
+
+// Nav scroll shadow
+window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+});
+document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.remove('active');
+    });
+});
+</script>
+</body>
+</html>

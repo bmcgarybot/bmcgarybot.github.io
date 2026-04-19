@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Your Reading | Cosmic Soul Maps</title>
+    <meta name="description" content="Order your personalized astrology or numerology reading from Cosmic Soul Maps. Fill in your birth details and choose your reading type.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://bmcgarybot.github.io/order.html">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="stars"></div>
+<nav class="nav" id="nav">
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">&#10022; Cosmic Soul Maps</a>
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Menu">&#9776;</button>
+        <ul class="nav-links">
+            <li><a href="index.html#readings">Readings</a></li>
+            <li><a href="index.html#how-it-works">How It Works</a></li>
+            <li><a href="index.html#horoscope">Free Horoscope</a></li>
+            <li><a href="index.html#faq">FAQ</a></li>
+        </ul>
+    </div>
+</nav>
+
+<section class="hero" style="padding:140px 0 60px">
+    <div class="container">
+        <div class="hero-badge">Step 1 of 2</div>
+        <h1><span class="gold">Order Your Reading</span></h1>
+        <p class="hero-desc">Fill in your birth details below. Accuracy matters for your chart, so grab your birth certificate if you can! We will email your completed reading as a PDF.</p>
+    </div>
+</section>
+
+<section style="padding:0 0 80px">
+<div class="container">
+    <div class="order-form">
+        <form id="orderForm" onsubmit="return submitOrder(event)">
+
+            <!-- Reading Selection -->
+            <div class="form-group">
+                <label for="reading">Which reading would you like? *</label>
+                <select id="reading" name="reading" required onchange="handleReadingChange()">
+                    <option value="" disabled selected>Select a reading</option>
+                    <option value="soul-map">The Soul Map (Birth Chart) - $24.99</option>
+                    <option value="love-compatibility">Love &amp; Compatibility (2 people) - $29.99</option>
+                    <option value="career-path">Career Path - $24.99</option>
+                    <option value="year-ahead">Year Ahead Forecast - $29.99</option>
+                    <option value="numerology">Numerology Deep Dive - $19.99</option>
+                    <option value="quick-snapshot">Quick Cosmic Snapshot - $9.99</option>
+                </select>
+            </div>
+
+            <hr class="form-divider">
+
+            <!-- Your Details -->
+            <h3 style="color:var(--text-bright);margin-bottom:24px;font-size:1.3rem">Your Birth Details</h3>
+
+            <div class="form-group">
+                <label for="fullName">Full birth name (first, middle, last) *</label>
+                <input type="text" id="fullName" name="fullName" placeholder="e.g. Alexandra Marie Johnson" required>
+                <div class="helper">Used for numerology calculations. Please include your middle name if you have one.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email address *</label>
+                <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                <div class="helper">We will deliver your reading to this address.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="birthDate">Date of birth *</label>
+                <input type="date" id="birthDate" name="birthDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="birthTime">Time of birth</label>
+                <input type="time" id="birthTime" name="birthTime">
+                <div class="helper">Check your birth certificate for the exact time. If unknown, leave blank and we will use a noon chart.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="birthPlace">City and country of birth *</label>
+                <input type="text" id="birthPlace" name="birthPlace" placeholder="e.g. Portland, Oregon, USA" required>
+            </div>
+
+            <!-- Partner Section (Love readings) -->
+            <div class="partner-section" id="partnerSection">
+                <h3 style="color:var(--pink);margin-bottom:24px;font-size:1.2rem">&#128150; Partner's Birth Details</h3>
+
+                <div class="form-group">
+                    <label for="partnerName">Partner's full birth name *</label>
+                    <input type="text" id="partnerName" name="partnerName" placeholder="e.g. Michael James Rivera">
+                </div>
+
+                <div class="form-group">
+                    <label for="partnerBirthDate">Partner's date of birth *</label>
+                    <input type="date" id="partnerBirthDate" name="partnerBirthDate">
+                </div>
+
+                <div class="form-group">
+                    <label for="partnerBirthTime">Partner's time of birth</label>
+                    <input type="time" id="partnerBirthTime" name="partnerBirthTime">
+                    <div class="helper">Leave blank if unknown. We will note the noon chart in the reading.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="partnerBirthPlace">Partner's city and country of birth *</label>
+                    <input type="text" id="partnerBirthPlace" name="partnerBirthPlace" placeholder="e.g. Austin, Texas, USA">
+                </div>
+            </div>
+
+            <!-- Forecast Section -->
+            <div class="forecast-section" id="forecastSection">
+                <h3 style="color:var(--blue);margin-bottom:24px;font-size:1.2rem">&#128302; Forecast Period</h3>
+
+                <div class="form-group">
+                    <label for="forecastStart">Start month for your forecast *</label>
+                    <input type="month" id="forecastStart" name="forecastStart">
+                    <div class="helper">Your 12-month forecast will begin from this month.</div>
+                </div>
+            </div>
+
+            <hr class="form-divider">
+
+            <div class="form-group">
+                <label for="notes">Anything else we should know?</label>
+                <textarea id="notes" name="notes" placeholder="Optional: specific questions, gift instructions, or details about your birth time accuracy."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;border-radius:10px;padding:16px;font-size:1.05rem" id="orderBtn">
+                Continue to Payment
+            </button>
+
+            <p style="text-align:center;color:var(--text-dim);font-size:.85rem;margin-top:16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+                After submitting, you will be directed to complete your payment.<br>
+                Currently accepting orders through <a href="https://www.etsy.com/shop/CosmicSoulMaps" target="_blank" rel="noopener" style="color:var(--accent-light);text-decoration:none">our Etsy shop</a> or via email at <a href="mailto:bmc.garybot@gmail.com" style="color:var(--accent-light);text-decoration:none">bmc.garybot@gmail.com</a>.
+            </p>
+        </form>
+
+        <div class="fsucc" id="orderSuccess" style="display:none">
+            <h3 style="margin-bottom:12px">&#10024; Order Details Received!</h3>
+            <p>Thank you! We have your birth details. To complete your order:</p>
+            <ol style="margin:16px 0;padding-left:24px;line-height:2">
+                <li>Visit <a href="https://www.etsy.com/shop/CosmicSoulMaps" target="_blank" rel="noopener" style="color:var(--accent-light)">our Etsy shop</a> to purchase your reading</li>
+                <li>Or email us at <a href="mailto:bmc.garybot@gmail.com" style="color:var(--accent-light)">bmc.garybot@gmail.com</a> to arrange PayPal payment</li>
+                <li>Include your name so we can match your order to your birth details</li>
+            </ol>
+            <p>Most readings are delivered within a few hours of payment confirmation. Same-day delivery guaranteed.</p>
+        </div>
+    </div>
+</div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-links">
+            <a href="index.html#readings">Readings</a>
+            <a href="horoscope-signup.html">Free Horoscope</a>
+            <a href="index.html#faq">FAQ</a>
+            <a href="https://www.etsy.com/shop/CosmicSoulMaps" target="_blank" rel="noopener">Etsy Shop</a>
+            <a href="mailto:bmc.garybot@gmail.com">Contact</a>
+        </div>
+        <p class="footer-copy">&copy; 2026 Cosmic Soul Maps. All readings are for entertainment and self-reflection purposes.<br>Powered by Swiss Ephemeris astronomical calculations.</p>
+    </div>
+</footer>
+
+<script>
+function handleReadingChange() {
+    const val = document.getElementById('reading').value;
+    const ps = document.getElementById('partnerSection');
+    const fs = document.getElementById('forecastSection');
+    ps.classList.toggle('visible', val === 'love-compatibility');
+    fs.classList.toggle('visible', val === 'year-ahead');
+
+    // Toggle required on partner fields
+    const partnerFields = ps.querySelectorAll('input');
+    partnerFields.forEach(f => {
+        if (f.id !== 'partnerBirthTime') {
+            f.required = val === 'love-compatibility';
+        }
+    });
+    const forecastField = document.getElementById('forecastStart');
+    forecastField.required = val === 'year-ahead';
+}
+
+function submitOrder(e) {
+    e.preventDefault();
+    const form = document.getElementById('orderForm');
+    const btn = document.getElementById('orderBtn');
+    const data = Object.fromEntries(new FormData(form));
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    // For now: log the data and show success
+    console.log('Order submitted:', data);
+
+    // Store in localStorage as backup
+    const orders = JSON.parse(localStorage.getItem('csm_orders') || '[]');
+    orders.push({...data, timestamp: new Date().toISOString()});
+    localStorage.setItem('csm_orders', JSON.stringify(orders));
+
+    form.style.display = 'none';
+    document.getElementById('orderSuccess').style.display = 'block';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    return false;
+}
+
+// Nav scroll shadow
+window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+});
+document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.remove('active');
+    });
+});
+</script>
+</body>
+</html>
