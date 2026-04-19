@@ -260,36 +260,30 @@ function submitOrder(e) {
     btn.disabled = true;
     btn.textContent = 'Submitting...';
 
-    console.log('Order submitted:', data);
-
-    // Always save to localStorage as backup
+    // Save to localStorage as backup
     const orders = JSON.parse(localStorage.getItem('csm_orders') || '[]');
     orders.push({...data, timestamp: new Date().toISOString()});
     localStorage.setItem('csm_orders', JSON.stringify(orders));
 
-    const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
-
-    if (APPS_SCRIPT_URL === 'PLACEHOLDER_APPS_SCRIPT_URL') {
-        // No backend configured yet -- show success from localStorage save
-        form.style.display = 'none';
-        document.getElementById('orderSuccess').style.display = 'block';
-        window.scrollTo({top: 0, behavior: 'smooth'});
-        return false;
-    }
-
-    // POST order to Google Apps Script backend
+    // Send via formsubmit.co (emails order data to our inbox)
     const formData = new FormData(form);
+    formData.append('_subject', 'New CSM Order: ' + (data.reading || 'Unknown') + ' — ' + (data.name || 'Anonymous'));
+    formData.append('_template', 'table');
+    formData.append('_captcha', 'false');
     formData.append('form_type', 'order');
-    fetch(APPS_SCRIPT_URL, {
+    formData.append('_next', window.location.href);
+
+    fetch('https://formsubmit.co/ajax/bmc.garybot@gmail.com', {
         method: 'POST',
+        headers: {'Accept': 'application/json'},
         body: formData
     }).then(r => r.json()).then(result => {
         form.style.display = 'none';
         document.getElementById('orderSuccess').style.display = 'block';
         window.scrollTo({top: 0, behavior: 'smooth'});
     }).catch(err => {
-        // Order already saved to localStorage -- still show success
-        console.warn('Apps Script POST failed, order saved locally:', err);
+        // Order saved to localStorage — still show success, we'll get it from backup
+        console.warn('Form submission network error, order saved locally:', err);
         form.style.display = 'none';
         document.getElementById('orderSuccess').style.display = 'block';
         window.scrollTo({top: 0, behavior: 'smooth'});
@@ -307,29 +301,25 @@ function submitFooterHoroscope(e) {
     btn.disabled = true;
     btn.textContent = 'Signing up...';
 
-    // Always save locally as backup
+    // Save locally as backup
     const signups = JSON.parse(localStorage.getItem('csm_horoscope_signups') || '[]');
     signups.push({...data, timestamp: new Date().toISOString(), source: 'footer-order'});
     localStorage.setItem('csm_horoscope_signups', JSON.stringify(signups));
 
-    const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
-
-    if (APPS_SCRIPT_URL === 'PLACEHOLDER_APPS_SCRIPT_URL') {
-        form.style.display = 'none';
-        document.getElementById('footerHoroscopeSuccess').style.display = 'block';
-        console.log('Footer horoscope signup (local only):', data);
-        return false;
-    }
-
+    formData.append('_subject', 'New Horoscope Signup: ' + (data.email || data.horoscope_email || 'unknown'));
+    formData.append('_template', 'table');
+    formData.append('_captcha', 'false');
     formData.append('source', 'footer-order');
-    fetch(APPS_SCRIPT_URL, {
+
+    fetch('https://formsubmit.co/ajax/bmc.garybot@gmail.com', {
         method: 'POST',
+        headers: {'Accept': 'application/json'},
         body: formData
     }).then(r => r.json()).then(result => {
         form.style.display = 'none';
         document.getElementById('footerHoroscopeSuccess').style.display = 'block';
     }).catch(err => {
-        console.warn('Footer Apps Script POST failed, signup saved locally:', err);
+        console.warn('Signup network error, saved locally:', err);
         form.style.display = 'none';
         document.getElementById('footerHoroscopeSuccess').style.display = 'block';
     });

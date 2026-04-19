@@ -192,30 +192,24 @@ function submitHoroscope(e) {
     btn.disabled = true;
     btn.textContent = 'Signing up...';
 
-    // Always save locally as backup
     const signups = JSON.parse(localStorage.getItem('csm_horoscope_signups') || '[]');
     signups.push({...data, timestamp: new Date().toISOString(), source: 'signup-page'});
     localStorage.setItem('csm_horoscope_signups', JSON.stringify(signups));
 
-    const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
-
-    if (APPS_SCRIPT_URL === 'PLACEHOLDER_APPS_SCRIPT_URL') {
-        console.log('Horoscope signup (local only):', data);
-        form.style.display = 'none';
-        document.getElementById('horoscopeSuccess').style.display = 'block';
-        return false;
-    }
-
+    formData.append('_subject', 'New Horoscope Signup: ' + (data.email || data.horoscope_email || 'unknown'));
+    formData.append('_template', 'table');
+    formData.append('_captcha', 'false');
     formData.append('source', 'signup-page');
-    fetch(APPS_SCRIPT_URL, {
+
+    fetch('https://formsubmit.co/ajax/bmc.garybot@gmail.com', {
         method: 'POST',
+        headers: {'Accept': 'application/json'},
         body: formData
     }).then(r => r.json()).then(() => {
         form.style.display = 'none';
         document.getElementById('horoscopeSuccess').style.display = 'block';
     }).catch(err => {
-        // Already saved locally, show success anyway
-        console.warn('Signup page Apps Script POST failed, signup saved locally:', err);
+        console.warn('Signup network error, saved locally:', err);
         form.style.display = 'none';
         document.getElementById('horoscopeSuccess').style.display = 'block';
     });
