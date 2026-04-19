@@ -51,7 +51,7 @@
 <section style="padding:0 0 80px">
 <div class="container">
     <div class="order-form">
-        <form id="orderForm" action="https://formsubmit.co/bmc.garybot@gmail.com" method="POST">
+        <form id="orderForm" action="https://formsubmit.co/bmc.garybot@gmail.com" method="POST" onsubmit="return submitOrder(event)">
 
             <!-- Reading Selection -->
             <div class="form-group">
@@ -148,6 +148,8 @@
             <input type="hidden" name="_subject" value="New CSM Order">
             <input type="hidden" name="_template" value="table">
             <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_replyto" id="replyToField">
+            <input type="hidden" name="_autoresponse" value="Thank you for your order from Cosmic Soul Maps! We have received your birth details and will begin crafting your personalized reading as soon as payment is confirmed. Most readings are delivered within 24 hours. If you have any questions, just reply to this email. -- The Cosmic Soul Maps Team">
             <input type="hidden" name="_next" value="https://mycosmicsoulmap.com/thank-you.html">
 
             <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;border-radius:10px;padding:16px;font-size:1.05rem" id="orderBtn">
@@ -280,9 +282,23 @@ function handleReadingChange() {
 
 function submitOrder(e) {
     // Form is now a standard POST to formsubmit.co (no AJAX needed)
-    // This function just handles localStorage backup
+    // This function just handles localStorage backup + dynamic hidden fields
     const form = document.getElementById('orderForm');
     const data = Object.fromEntries(new FormData(form));
+
+    // Set _replyto to customer email so Big Dog can reply directly
+    const emailField = document.getElementById('email');
+    const replyTo = document.getElementById('replyToField');
+    if (emailField && replyTo) replyTo.value = emailField.value;
+
+    // Enrich subject with reading type for email filtering
+    const readingNames = {'soul-map':'Soul Map','love-compatibility':'Love & Compatibility','career-path':'Career Path','year-ahead':'Year Ahead Forecast','numerology':'Numerology','quick-snapshot':'Quick Snapshot'};
+    const subjectField = document.querySelector('input[name="_subject"]');
+    const readingVal = document.getElementById('reading').value;
+    if (subjectField && readingVal) {
+        subjectField.value = 'New CSM Order: ' + (readingNames[readingVal] || readingVal) + ' — ' + (data.name || 'Customer');
+    }
+
     const orders = JSON.parse(localStorage.getItem('csm_orders') || '[]');
     orders.push({...data, timestamp: new Date().toISOString()});
     localStorage.setItem('csm_orders', JSON.stringify(orders));
