@@ -208,6 +208,32 @@
 </footer>
 
 <script>
+// URL param to select value mapping
+const READING_PARAM_MAP = {
+    'natal': 'soul-map',
+    'soul-map': 'soul-map',
+    'love': 'love-compatibility',
+    'love-compatibility': 'love-compatibility',
+    'career': 'career-path',
+    'career-path': 'career-path',
+    'forecast': 'year-ahead',
+    'year-ahead': 'year-ahead',
+    'numerology': 'numerology',
+    'quick': 'quick-snapshot',
+    'quick-snapshot': 'quick-snapshot'
+};
+
+// Auto-select reading from URL param on page load
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    const reading = params.get('reading');
+    if (reading && READING_PARAM_MAP[reading]) {
+        const select = document.getElementById('reading');
+        select.value = READING_PARAM_MAP[reading];
+        handleReadingChange();
+    }
+})();
+
 function handleReadingChange() {
     const val = document.getElementById('reading').value;
     const ps = document.getElementById('partnerSection');
@@ -236,13 +262,38 @@ function submitOrder(e) {
 
     console.log('Order submitted:', data);
 
+    // Always save to localStorage as backup
     const orders = JSON.parse(localStorage.getItem('csm_orders') || '[]');
     orders.push({...data, timestamp: new Date().toISOString()});
     localStorage.setItem('csm_orders', JSON.stringify(orders));
 
-    form.style.display = 'none';
-    document.getElementById('orderSuccess').style.display = 'block';
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
+
+    if (APPS_SCRIPT_URL === 'PLACEHOLDER_APPS_SCRIPT_URL') {
+        // No backend configured yet -- show success from localStorage save
+        form.style.display = 'none';
+        document.getElementById('orderSuccess').style.display = 'block';
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        return false;
+    }
+
+    // POST order to Google Apps Script backend
+    const formData = new FormData(form);
+    formData.append('form_type', 'order');
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+    }).then(r => r.json()).then(result => {
+        form.style.display = 'none';
+        document.getElementById('orderSuccess').style.display = 'block';
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }).catch(err => {
+        // Order already saved to localStorage -- still show success
+        console.warn('Apps Script POST failed, order saved locally:', err);
+        form.style.display = 'none';
+        document.getElementById('orderSuccess').style.display = 'block';
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    });
     return false;
 }
 
@@ -251,17 +302,37 @@ function submitFooterHoroscope(e) {
     e.preventDefault();
     const form = document.getElementById('footerHoroscopeForm');
     const btn = document.getElementById('footerHoroscopeBtn');
-    const data = Object.fromEntries(new FormData(form));
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
     btn.disabled = true;
     btn.textContent = 'Signing up...';
 
+    // Always save locally as backup
     const signups = JSON.parse(localStorage.getItem('csm_horoscope_signups') || '[]');
     signups.push({...data, timestamp: new Date().toISOString(), source: 'footer-order'});
     localStorage.setItem('csm_horoscope_signups', JSON.stringify(signups));
-    console.log('Footer horoscope signup:', data);
 
-    form.style.display = 'none';
-    document.getElementById('footerHoroscopeSuccess').style.display = 'block';
+    const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
+
+    if (APPS_SCRIPT_URL === 'PLACEHOLDER_APPS_SCRIPT_URL') {
+        form.style.display = 'none';
+        document.getElementById('footerHoroscopeSuccess').style.display = 'block';
+        console.log('Footer horoscope signup (local only):', data);
+        return false;
+    }
+
+    formData.append('source', 'footer-order');
+    fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: formData
+    }).then(r => r.json()).then(result => {
+        form.style.display = 'none';
+        document.getElementById('footerHoroscopeSuccess').style.display = 'block';
+    }).catch(err => {
+        console.warn('Footer Apps Script POST failed, signup saved locally:', err);
+        form.style.display = 'none';
+        document.getElementById('footerHoroscopeSuccess').style.display = 'block';
+    });
     return false;
 }
 

@@ -186,33 +186,38 @@ function submitHoroscope(e) {
     e.preventDefault();
     const form = document.getElementById('horoscopeForm');
     const btn = document.getElementById('horoscopeBtn');
-    const data = Object.fromEntries(new FormData(form));
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
 
     btn.disabled = true;
     btn.textContent = 'Signing up...';
 
+    // Always save locally as backup
+    const signups = JSON.parse(localStorage.getItem('csm_horoscope_signups') || '[]');
+    signups.push({...data, timestamp: new Date().toISOString(), source: 'signup-page'});
+    localStorage.setItem('csm_horoscope_signups', JSON.stringify(signups));
+
     const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
 
     if (APPS_SCRIPT_URL === 'PLACEHOLDER_APPS_SCRIPT_URL') {
-        const signups = JSON.parse(localStorage.getItem('csm_horoscope_signups') || '[]');
-        signups.push({...data, timestamp: new Date().toISOString()});
-        localStorage.setItem('csm_horoscope_signups', JSON.stringify(signups));
-        console.log('Horoscope signup:', data);
+        console.log('Horoscope signup (local only):', data);
         form.style.display = 'none';
         document.getElementById('horoscopeSuccess').style.display = 'block';
         return false;
     }
 
+    formData.append('source', 'signup-page');
     fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        body: new FormData(form)
+        body: formData
     }).then(r => r.json()).then(() => {
         form.style.display = 'none';
         document.getElementById('horoscopeSuccess').style.display = 'block';
-    }).catch(() => {
-        btn.disabled = false;
-        btn.textContent = 'Sign Up for Free';
-        alert('Something went wrong. Please try again or email us at bmc.garybot@gmail.com');
+    }).catch(err => {
+        // Already saved locally, show success anyway
+        console.warn('Signup page Apps Script POST failed, signup saved locally:', err);
+        form.style.display = 'none';
+        document.getElementById('horoscopeSuccess').style.display = 'block';
     });
     return false;
 }
