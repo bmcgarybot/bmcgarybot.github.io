@@ -4,16 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free Daily Horoscope Signup | Cosmic Soul Maps</title>
-    <meta name="description" content="Sign up for a free personalized daily horoscope from Cosmic Soul Maps. Real transit data, delivered to your inbox every morning.">
+    <meta name="description" content="Sign up for a free personalized daily horoscope from Cosmic Soul Maps. Real transit data, delivered to your inbox every morning. Always free.">
+    <meta name="keywords" content="free daily horoscope, daily horoscope email, personalized horoscope, horoscope signup, astrology daily, sun sign horoscope">
+    <meta name="author" content="Cosmic Soul Maps">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://bmcgarybot.github.io/horoscope-signup.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Free Daily Horoscope | Cosmic Soul Maps">
+    <meta property="og:description" content="Get your personalized daily horoscope delivered every morning. Real transit data, not generic filler. Always free.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mycosmicsoulmap.com/horoscope-signup.html">
+    <meta property="og:site_name" content="Cosmic Soul Maps">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Free Daily Horoscope | Cosmic Soul Maps">
+    <meta name="twitter:description" content="Personalized daily horoscope using real transit data. Delivered free to your inbox every morning.">
+
+    <link rel="canonical" href="https://mycosmicsoulmap.com/horoscope-signup.html">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="stars"></div>
 <nav class="nav" id="nav">
     <div class="nav-inner">
-        <a href="index.html" class="nav-logo">&#10022; Cosmic Soul Maps</a>
+        <a href="/" class="nav-logo">&#10022; Cosmic Soul Maps</a>
         <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Menu">&#9776;</button>
         <ul class="nav-links">
             <li><a href="index.html#readings">Readings</a></li>
@@ -178,7 +194,6 @@ function submitHoroscope(e) {
     const APPS_SCRIPT_URL = 'PLACEHOLDER_APPS_SCRIPT_URL';
 
     if (APPS_SCRIPT_URL === 'PLACEHOLDER_APPS_SCRIPT_URL') {
-        // Store locally until backend is configured
         const signups = JSON.parse(localStorage.getItem('csm_horoscope_signups') || '[]');
         signups.push({...data, timestamp: new Date().toISOString()});
         localStorage.setItem('csm_horoscope_signups', JSON.stringify(signups));

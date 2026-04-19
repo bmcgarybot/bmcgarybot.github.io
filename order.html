@@ -4,21 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Your Reading | Cosmic Soul Maps</title>
-    <meta name="description" content="Order your personalized astrology or numerology reading from Cosmic Soul Maps. Fill in your birth details and choose your reading type.">
+    <meta name="description" content="Order your personalized astrology or numerology reading from Cosmic Soul Maps. Fill in your birth details, pay securely, and receive your reading via email the same day.">
+    <meta name="keywords" content="order astrology reading, buy birth chart reading, personalized natal chart, order numerology reading, astrology reading delivery">
+    <meta name="author" content="Cosmic Soul Maps">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://bmcgarybot.github.io/order.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Order Your Reading | Cosmic Soul Maps">
+    <meta property="og:description" content="Order a personalized astrology or numerology reading. Same-day delivery, real Swiss Ephemeris calculations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mycosmicsoulmap.com/order.html">
+    <meta property="og:site_name" content="Cosmic Soul Maps">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Order Your Reading | Cosmic Soul Maps">
+    <meta name="twitter:description" content="Personalized astrology and numerology readings with same-day delivery.">
+
+    <link rel="canonical" href="https://mycosmicsoulmap.com/order.html">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="stars"></div>
 <nav class="nav" id="nav">
     <div class="nav-inner">
-        <a href="index.html" class="nav-logo">&#10022; Cosmic Soul Maps</a>
+        <a href="/" class="nav-logo">&#10022; Cosmic Soul Maps</a>
         <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Menu">&#9776;</button>
         <ul class="nav-links">
             <li><a href="index.html#readings">Readings</a></li>
             <li><a href="index.html#how-it-works">How It Works</a></li>
-            <li><a href="index.html#horoscope">Free Horoscope</a></li>
+            <li><a href="horoscope-signup.html">Free Horoscope</a></li>
             <li><a href="index.html#faq">FAQ</a></li>
         </ul>
     </div>
@@ -152,6 +168,32 @@
 </div>
 </section>
 
+<!-- Email Capture Footer Banner -->
+<section class="email-capture-banner">
+    <div class="container">
+        <div class="email-capture-inner">
+            <div class="email-capture-text">
+                <h3>&#9734; Get Your Free Daily Horoscope</h3>
+                <p>Real transit data delivered to your inbox every morning. No fluff, no spam.</p>
+            </div>
+            <form class="email-capture-form" id="footerHoroscopeForm" onsubmit="return submitFooterHoroscope(event)">
+                <input type="email" name="email" placeholder="Your email address" required>
+                <select name="sign" required>
+                    <option value="" disabled selected>Sign</option>
+                    <option>Aries</option><option>Taurus</option><option>Gemini</option>
+                    <option>Cancer</option><option>Leo</option><option>Virgo</option>
+                    <option>Libra</option><option>Scorpio</option><option>Sagittarius</option>
+                    <option>Capricorn</option><option>Aquarius</option><option>Pisces</option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm" id="footerHoroscopeBtn">Subscribe Free</button>
+            </form>
+            <div class="fsucc" id="footerHoroscopeSuccess" style="display:none;margin-top:12px">
+                &#10024; You are signed up! Look for your first horoscope tomorrow morning.
+            </div>
+        </div>
+    </div>
+</section>
+
 <footer class="footer">
     <div class="container">
         <div class="footer-links">
@@ -173,7 +215,6 @@ function handleReadingChange() {
     ps.classList.toggle('visible', val === 'love-compatibility');
     fs.classList.toggle('visible', val === 'year-ahead');
 
-    // Toggle required on partner fields
     const partnerFields = ps.querySelectorAll('input');
     partnerFields.forEach(f => {
         if (f.id !== 'partnerBirthTime') {
@@ -193,10 +234,8 @@ function submitOrder(e) {
     btn.disabled = true;
     btn.textContent = 'Submitting...';
 
-    // For now: log the data and show success
     console.log('Order submitted:', data);
 
-    // Store in localStorage as backup
     const orders = JSON.parse(localStorage.getItem('csm_orders') || '[]');
     orders.push({...data, timestamp: new Date().toISOString()});
     localStorage.setItem('csm_orders', JSON.stringify(orders));
@@ -204,6 +243,25 @@ function submitOrder(e) {
     form.style.display = 'none';
     document.getElementById('orderSuccess').style.display = 'block';
     window.scrollTo({top: 0, behavior: 'smooth'});
+    return false;
+}
+
+// Footer email capture
+function submitFooterHoroscope(e) {
+    e.preventDefault();
+    const form = document.getElementById('footerHoroscopeForm');
+    const btn = document.getElementById('footerHoroscopeBtn');
+    const data = Object.fromEntries(new FormData(form));
+    btn.disabled = true;
+    btn.textContent = 'Signing up...';
+
+    const signups = JSON.parse(localStorage.getItem('csm_horoscope_signups') || '[]');
+    signups.push({...data, timestamp: new Date().toISOString(), source: 'footer-order'});
+    localStorage.setItem('csm_horoscope_signups', JSON.stringify(signups));
+    console.log('Footer horoscope signup:', data);
+
+    form.style.display = 'none';
+    document.getElementById('footerHoroscopeSuccess').style.display = 'block';
     return false;
 }
 
