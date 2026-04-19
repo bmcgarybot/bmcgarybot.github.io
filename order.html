@@ -155,14 +155,14 @@
         </form>
 
         <div class="fsucc" id="orderSuccess" style="display:none">
-            <h3 style="margin-bottom:12px">&#10024; Order Details Received!</h3>
-            <p>Thank you! We have your birth details. To complete your order:</p>
-            <ol style="margin:16px 0;padding-left:24px;line-height:2">
-                <li>Visit <a href="https://www.etsy.com/shop/CosmicSoulMaps" target="_blank" rel="noopener" style="color:var(--accent-light)">our Etsy shop</a> to purchase your reading</li>
-                <li>Or email us at <a href="mailto:bmc.garybot@gmail.com" style="color:var(--accent-light)">bmc.garybot@gmail.com</a> to arrange PayPal payment</li>
-                <li>Include your name so we can match your order to your birth details</li>
-            </ol>
-            <p>Most readings are delivered within a few hours of payment confirmation. Same-day delivery guaranteed.</p>
+            <h3 style="margin-bottom:12px">&#10024; Almost There!</h3>
+            <p>Your birth details have been received. Complete your payment below to start your reading:</p>
+            <div id="paymentBox" style="margin:20px 0;text-align:center">
+                <a id="paypalLink" href="https://paypal.me/BrettCoon/24.99" target="_blank" rel="noopener" style="display:inline-block;background:linear-gradient(135deg,#0070ba,#003087);color:#fff;padding:16px 40px;border-radius:8px;font-size:1.1rem;font-weight:600;text-decoration:none;letter-spacing:0.5px;transition:transform 0.2s">&#128179; Pay with PayPal — <span id="payAmount">$24.99</span></a>
+                <p style="margin-top:12px;font-size:0.85rem;opacity:0.7">You'll be redirected to PayPal to complete payment securely.</p>
+            </div>
+            <p style="font-size:0.9rem;margin-top:16px">After payment, your reading will be delivered to your email within 24 hours. Most are delivered same-day.</p>
+            <p style="font-size:0.85rem;opacity:0.7;margin-top:8px">Questions? Email <a href="mailto:bmc.garybot@gmail.com" style="color:var(--accent-light)">bmc.garybot@gmail.com</a></p>
         </div>
     </div>
 </div>
@@ -265,12 +265,22 @@ function submitOrder(e) {
     orders.push({...data, timestamp: new Date().toISOString()});
     localStorage.setItem('csm_orders', JSON.stringify(orders));
 
+    // Set PayPal link with correct amount
+    const prices = {
+        'soul-map': '24.99', 'love-compatibility': '29.99', 'career-path': '24.99',
+        'year-ahead': '29.99', 'numerology': '19.99', 'quick-snapshot': '9.99'
+    };
+    const amount = prices[data.reading] || '24.99';
+    document.getElementById('paypalLink').href = 'https://paypal.me/BrettCoon/' + amount;
+    document.getElementById('payAmount').textContent = '$' + amount;
+
     // Send via formsubmit.co (emails order data to our inbox)
     const formData = new FormData(form);
-    formData.append('_subject', 'New CSM Order: ' + (data.reading || 'Unknown') + ' — ' + (data.name || 'Anonymous'));
+    formData.append('_subject', 'New CSM Order: ' + (data.reading || 'Unknown') + ' — ' + (data.name || 'Anonymous') + ' — $' + amount);
     formData.append('_template', 'table');
     formData.append('_captcha', 'false');
     formData.append('form_type', 'order');
+    formData.append('price', '$' + amount);
     formData.append('_next', window.location.href);
 
     fetch('https://formsubmit.co/ajax/bmc.garybot@gmail.com', {
@@ -280,13 +290,12 @@ function submitOrder(e) {
     }).then(r => r.json()).then(result => {
         form.style.display = 'none';
         document.getElementById('orderSuccess').style.display = 'block';
-        window.scrollTo({top: 0, behavior: 'smooth'});
+        window.scrollTo({top: document.getElementById('orderSuccess').offsetTop - 100, behavior: 'smooth'});
     }).catch(err => {
-        // Order saved to localStorage — still show success, we'll get it from backup
         console.warn('Form submission network error, order saved locally:', err);
         form.style.display = 'none';
         document.getElementById('orderSuccess').style.display = 'block';
-        window.scrollTo({top: 0, behavior: 'smooth'});
+        window.scrollTo({top: document.getElementById('orderSuccess').offsetTop - 100, behavior: 'smooth'});
     });
     return false;
 }
