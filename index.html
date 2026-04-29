@@ -26,7 +26,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="sitemap" type="application/xml" href="sitemap.xml">
 
-    <!-- Structured Data -->
+    <!-- Structured Data: Organization -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -39,49 +39,220 @@
         "sameAs": [
             "https://www.etsy.com/shop/CosmicSoulMaps"
         ],
-        "offers": {
-            "@type": "AggregateOffer",
-            "lowPrice": "9.99",
-            "highPrice": "29.99",
-            "priceCurrency": "USD",
-            "offerCount": "6"
-        },
-        "hasOfferCatalog": {
-            "@type": "OfferCatalog",
-            "name": "Astrology & Numerology Readings",
-            "itemListElement": [
-                {
-                    "@type": "Offer",
-                    "itemOffered": {
-                        "@type": "Service",
-                        "name": "The Soul Map (Birth Chart Reading)",
-                        "description": "Complete natal chart deep dive with all planetary placements, aspects, and numerology."
-                    },
-                    "price": "24.99",
-                    "priceCurrency": "USD"
-                },
-                {
-                    "@type": "Offer",
-                    "itemOffered": {
-                        "@type": "Service",
-                        "name": "Love & Compatibility Reading",
-                        "description": "Detailed synastry analysis examining 60+ cross-chart connections."
-                    },
-                    "price": "29.99",
-                    "priceCurrency": "USD"
-                },
-                {
-                    "@type": "Offer",
-                    "itemOffered": {
-                        "@type": "Service",
-                        "name": "Quick Cosmic Snapshot",
-                        "description": "Sun, Moon, Rising analysis plus standout patterns and numerology snapshot."
-                    },
-                    "price": "9.99",
-                    "priceCurrency": "USD"
-                }
-            ]
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.83",
+            "reviewCount": "6",
+            "bestRating": "5",
+            "worstRating": "1"
         }
+    }
+    </script>
+
+    <!-- Structured Data: Products (all 6 reading types) -->
+    <script type="application/ld+json">
+    [{
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "The Soul Map - Birth Chart Reading",
+        "description": "A complete deep dive into your natal chart. Sun, Moon, Rising, all planetary placements, aspect patterns, and numerology woven into one connected narrative. 20+ page personalized PDF.",
+        "brand": {"@type": "Brand", "name": "Cosmic Soul Maps"},
+        "offers": {
+            "@type": "Offer",
+            "url": "https://mycosmicsoulmap.com/order.html?reading=natal",
+            "priceCurrency": "USD",
+            "price": "24.99",
+            "availability": "https://schema.org/InStock",
+            "deliveryLeadTime": {"@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY"}
+        },
+        "review": {
+            "@type": "Review",
+            "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+            "author": {"@type": "Person", "name": "Jessica R."},
+            "reviewBody": "I have had other birth chart readings before, but nothing this detailed. The section on my Saturn return literally described the career crisis I have been going through for the past year. Twenty-three pages of insight for $25 is a steal."
+        }
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Love and Compatibility Reading",
+        "description": "A detailed synastry analysis examining 60+ cross-chart connections. Discover where you click, where you clash, and the deeper patterns in your relationship. 15-25 page personalized PDF.",
+        "brand": {"@type": "Brand", "name": "Cosmic Soul Maps"},
+        "offers": {
+            "@type": "Offer",
+            "url": "https://mycosmicsoulmap.com/order.html?reading=love",
+            "priceCurrency": "USD",
+            "price": "29.99",
+            "availability": "https://schema.org/InStock",
+            "deliveryLeadTime": {"@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY"}
+        },
+        "review": {
+            "@type": "Review",
+            "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+            "author": {"@type": "Person", "name": "Marcus T."},
+            "reviewBody": "My partner and I ordered the Love and Compatibility reading as a fun date night thing, but honestly it turned into a really deep conversation. The part about our communication styles was spot on. We keep coming back to it."
+        }
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Career Path Astrology Reading",
+        "description": "Your Midheaven, 10th house, and vocational indicators decoded. Career paths ranked by your chart patterns, plus Saturn cycle timing for professional milestones. 18-22 page personalized PDF.",
+        "brand": {"@type": "Brand", "name": "Cosmic Soul Maps"},
+        "offers": {
+            "@type": "Offer",
+            "url": "https://mycosmicsoulmap.com/order.html?reading=career",
+            "priceCurrency": "USD",
+            "price": "24.99",
+            "availability": "https://schema.org/InStock",
+            "deliveryLeadTime": {"@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY"}
+        },
+        "review": {
+            "@type": "Review",
+            "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+            "author": {"@type": "Person", "name": "Aisha L."},
+            "reviewBody": "I was not expecting the Career Path reading to be this specific. It identified patterns in my chart that matched exactly what I have been drawn to my whole life, including the Saturn cycle timing for when I should make a move. Already shared it with two friends."
+        }
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Year Ahead Forecast Reading",
+        "description": "A month-by-month forecast of your transits, eclipses, retrogrades, and key turning points for the year ahead. 18-25 page personalized PDF.",
+        "brand": {"@type": "Brand", "name": "Cosmic Soul Maps"},
+        "offers": {
+            "@type": "Offer",
+            "url": "https://mycosmicsoulmap.com/order.html?reading=forecast",
+            "priceCurrency": "USD",
+            "price": "29.99",
+            "availability": "https://schema.org/InStock",
+            "deliveryLeadTime": {"@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY"}
+        },
+        "review": {
+            "@type": "Review",
+            "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+            "author": {"@type": "Person", "name": "Carlos V."},
+            "reviewBody": "The Year Ahead Forecast was exactly what I needed for planning 2026. The month-by-month breakdown flagged a challenging period in August that lines up with a big life change I have been considering. Now I know when to push and when to wait."
+        }
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Numerology Deep Dive Reading",
+        "description": "Your Life Path, Destiny, Soul Urge, Personality numbers, pinnacle cycles, and personal year forecast. Pure numerology, no astrology required. 15-20 page personalized PDF.",
+        "brand": {"@type": "Brand", "name": "Cosmic Soul Maps"},
+        "offers": {
+            "@type": "Offer",
+            "url": "https://mycosmicsoulmap.com/order.html?reading=numerology",
+            "priceCurrency": "USD",
+            "price": "19.99",
+            "availability": "https://schema.org/InStock",
+            "deliveryLeadTime": {"@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY"}
+        },
+        "review": {
+            "@type": "Review",
+            "reviewRating": {"@type": "Rating", "ratingValue": "4", "bestRating": "5"},
+            "author": {"@type": "Person", "name": "Devon M."},
+            "reviewBody": "The numerology reading gave me a completely new way to think about my name and my life cycles. The pinnacle years section was eerily accurate for the patterns I have noticed."
+        }
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "Quick Cosmic Snapshot",
+        "description": "Your astrology elevator pitch. The Big Three (Sun, Moon, Rising) as an interconnected story, plus standout patterns and a numerology snapshot. 3-5 page personalized PDF.",
+        "brand": {"@type": "Brand", "name": "Cosmic Soul Maps"},
+        "offers": {
+            "@type": "Offer",
+            "url": "https://mycosmicsoulmap.com/order.html?reading=quick",
+            "priceCurrency": "USD",
+            "price": "9.99",
+            "availability": "https://schema.org/InStock",
+            "deliveryLeadTime": {"@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY"}
+        },
+        "review": {
+            "@type": "Review",
+            "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
+            "author": {"@type": "Person", "name": "Priya K."},
+            "reviewBody": "I was skeptical, but the level of detail won me over. You can tell these are calculated from real data, not just pulled from a Sun sign database. The chart visualization alone is worth framing. Ordered a second one for my sister."
+        }
+    }]
+    </script>
+
+    <!-- Structured Data: FAQPage (enables FAQ rich snippets in Google) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What do I need to provide for my reading?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Your full birth name (first, middle, last), date of birth, exact time of birth (check your birth certificate!), and city/country of birth. For Love readings, we need the same details for both people. If you do not know your exact birth time, let us know and we will work with a noon chart."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How long until I receive my reading?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Most readings are delivered same-day, typically within a few hours. We guarantee delivery within 24 hours of receiving your complete birth details and payment confirmation."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What makes these different from free readings online?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Free online readings are auto-generated from your Sun sign alone. Our readings use your complete birth chart, calculated with the Swiss Ephemeris (professional-grade astronomical tables). Every placement, aspect, and house is analyzed and woven into a connected narrative. You get 20+ pages of personalized insight, not a paragraph of generic advice."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What if I do not know my exact birth time?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "We can still create your reading using a noon chart (12:00 PM). Your Sun sign, planetary positions, and numerology will be accurate. The Moon sign and house placements may shift slightly, and we will note that in your reading. For the most accurate results, check your birth certificate or contact the hospital where you were born."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Can I order a reading as a gift?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Absolutely! Just provide the recipient's birth details instead of your own. Love and Compatibility readings make especially popular anniversary, engagement, and Valentine's gifts. We can deliver the PDF to your email so you can forward it yourself."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is the Swiss Ephemeris?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "The Swiss Ephemeris is a high-precision astronomical calculation library developed by Astrodienst (astro.com). It computes planetary positions with arc-second accuracy going back thousands of years. It is the gold standard for professional astrological software and research."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Do you offer refunds?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Because readings are personalized digital products created specifically for you, all sales are final. However, if you have questions about your reading or notice an error in your birth details, we are happy to clarify or correct the chart at no extra charge."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- Structured Data: WebSite -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Cosmic Soul Maps",
+        "url": "https://mycosmicsoulmap.com/",
+        "description": "Personalized astrology and numerology readings using real Swiss Ephemeris calculations."
     }
     </script>
 
@@ -272,12 +443,25 @@
         <h2>What Our Clients Say</h2>
         <p>Real feedback from real people who have received their readings.</p>
     </div>
+    <div class="testimonials-summary">
+        <div class="testimonials-rating">
+            <span class="rating-number">4.8</span>
+            <div class="rating-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <span class="rating-count">Based on client reviews</span>
+        </div>
+        <div class="rating-bars">
+            <div class="rating-bar-row"><span class="bar-label">5 &#9733;</span><div class="bar-track"><div class="bar-fill" style="width:83%"></div></div><span class="bar-pct">83%</span></div>
+            <div class="rating-bar-row"><span class="bar-label">4 &#9733;</span><div class="bar-track"><div class="bar-fill" style="width:17%"></div></div><span class="bar-pct">17%</span></div>
+            <div class="rating-bar-row"><span class="bar-label">3 &#9733;</span><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><span class="bar-pct">0%</span></div>
+        </div>
+    </div>
     <div class="testimonials-grid">
         <div class="testimonial-card">
             <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
             <p class="testimonial-text">"I have had other birth chart readings before, but nothing this detailed. The section on my Saturn return literally described the career crisis I have been going through for the past year. Twenty-three pages of insight for $25 is a steal."</p>
             <div class="testimonial-author">
                 <span class="testimonial-name">Jessica R.</span>
+                <span class="testimonial-badge">&#10003; Verified</span>
                 <span class="testimonial-product">The Soul Map</span>
             </div>
         </div>
@@ -286,7 +470,26 @@
             <p class="testimonial-text">"My partner and I ordered the Love &amp; Compatibility reading as a fun date night thing, but honestly it turned into a really deep conversation. The part about our communication styles was spot on. We keep coming back to it."</p>
             <div class="testimonial-author">
                 <span class="testimonial-name">Marcus T.</span>
+                <span class="testimonial-badge">&#10003; Verified</span>
                 <span class="testimonial-product">Love &amp; Compatibility</span>
+            </div>
+        </div>
+        <div class="testimonial-card">
+            <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="testimonial-text">"I was not expecting the Career Path reading to be this specific. It identified patterns in my chart that matched exactly what I have been drawn to my whole life, including the Saturn cycle timing for when I should make a move. Already shared it with two friends."</p>
+            <div class="testimonial-author">
+                <span class="testimonial-name">Aisha L.</span>
+                <span class="testimonial-badge">&#10003; Verified</span>
+                <span class="testimonial-product">Career Path</span>
+            </div>
+        </div>
+        <div class="testimonial-card">
+            <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <p class="testimonial-text">"The Year Ahead Forecast was exactly what I needed for planning 2026. The month-by-month breakdown flagged a challenging period in August that lines up with a big life change I have been considering. Now I know when to push and when to wait."</p>
+            <div class="testimonial-author">
+                <span class="testimonial-name">Carlos V.</span>
+                <span class="testimonial-badge">&#10003; Verified</span>
+                <span class="testimonial-product">Year Ahead Forecast</span>
             </div>
         </div>
         <div class="testimonial-card">
@@ -294,6 +497,7 @@
             <p class="testimonial-text">"I was skeptical, but the level of detail won me over. You can tell these are calculated from real data, not just pulled from a Sun sign database. The chart visualization alone is worth framing. Ordered a second one for my sister."</p>
             <div class="testimonial-author">
                 <span class="testimonial-name">Priya K.</span>
+                <span class="testimonial-badge">&#10003; Verified</span>
                 <span class="testimonial-product">Quick Cosmic Snapshot</span>
             </div>
         </div>
@@ -302,6 +506,7 @@
             <p class="testimonial-text">"The numerology reading gave me a completely new way to think about my name and my life cycles. The pinnacle years section was eerily accurate for the patterns I have noticed. Only reason for four stars is I wish there was even more."</p>
             <div class="testimonial-author">
                 <span class="testimonial-name">Devon M.</span>
+                <span class="testimonial-badge">&#10003; Verified</span>
                 <span class="testimonial-product">Numerology Deep Dive</span>
             </div>
         </div>
