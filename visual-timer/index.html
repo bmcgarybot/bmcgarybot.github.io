@@ -28,6 +28,9 @@
     --warning: #d4a520;
     --info: #5b4cc4;
   }
+  :root.light .task-time-display { color: #000 !important; }
+  :root.light .task-title { color: #000 !important; }
+  :root.light .task-card.active .task-title { color: var(--accent) !important; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1024,9 +1027,16 @@ document.addEventListener('keydown', (e) => {
 // ===== THEME TOGGLE =====
 function toggleTheme() {
   const root = document.documentElement;
-  const isLight = root.classList.toggle('light');
-  document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
-  localStorage.setItem('visualTimerTheme', isLight ? 'light' : 'dark');
+  const isCurrentlyLight = root.classList.contains('light');
+  if (isCurrentlyLight) {
+    root.classList.remove('light');
+    document.getElementById('themeToggle').textContent = '🌙';
+    localStorage.setItem('visualTimerTheme', 'dark');
+  } else {
+    root.classList.add('light');
+    document.getElementById('themeToggle').textContent = '☀️';
+    localStorage.setItem('visualTimerTheme', 'light');
+  }
 }
 function loadTheme() {
   const saved = localStorage.getItem('visualTimerTheme');
