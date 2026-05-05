@@ -2,12 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>TaskBuddy — Visual Task Timer</title>
-<meta name="description" content="Visual task timer designed for autism & special needs. Colorful timers, photo reveals, rewards, and accessibility features.">
-<meta name="theme-color" content="#1a1a2e">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visual Task Timer</title>
 <style>
   :root {
     --bg: #1a1a2e;
@@ -19,510 +15,593 @@
     --success: #4ecca3;
     --warning: #f0c040;
     --info: #7b68ee;
-    --font-main: 'Nunito', system-ui, sans-serif;
-    --radius: 18px;
   }
+
   :root.light {
-    --bg: #f0f2f5;
+    --bg: #f5f5f5;
     --surface: #ffffff;
     --surface2: #e0e0e8;
     --text: #000000;
     --text-dim: #444444;
+    --accent: #e94560;
+    --success: #2d9f78;
+    --warning: #d4a520;
+    --info: #5b4cc4;
   }
-  :root.dyslexic { --font-main: 'OpenDyslexic', sans-serif; }
-
-  /* Theme presets */
-  :root.theme-ocean { --bg: #0a1628; --surface: #0d2137; --surface2: #163a5c; --accent: #00b4d8; --success: #06d6a0; --info: #48cae4; }
-  :root.theme-jungle { --bg: #0b1a0b; --surface: #142814; --surface2: #1e3d1e; --accent: #ff6b35; --success: #8ac926; --info: #06d6a0; }
-  :root.theme-space { --bg: #0b0025; --surface: #150040; --surface2: #250066; --accent: #ff006e; --success: #8338ec; --info: #3a86ff; }
-  :root.theme-candy { --bg: #2d1b33; --surface: #3d2645; --surface2: #5c3d6e; --accent: #ff6b9d; --success: #c0eb75; --info: #ffd166; --warning: #ff9a76; }
-  :root.theme-ocean.light { --bg: #e8f4f8; --surface: #fff; --surface2: #c5e4ed; }
-  :root.theme-jungle.light { --bg: #edf5ed; --surface: #fff; --surface2: #c5dcc5; }
-  :root.theme-space.light { --bg: #f0ecf5; --surface: #fff; --surface2: #d5c8e8; }
-  :root.theme-candy.light { --bg: #fce8ef; --surface: #fff; --surface2: #f0c5d4; }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: var(--font-main);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-    transition: background 0.3s, color 0.3s;
-  }
-
-  /* ===== TOP BAR ===== */
-  .top-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px; background: var(--surface);
-    border-bottom: 2px solid var(--surface2); flex-wrap: wrap; gap: 10px;
-  }
-  .top-bar h1 {
-    font-size: 1.5rem; font-weight: 800;
-    background: linear-gradient(135deg, #e94560, #f0c040, #4ecca3, #7b68ee);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-  .top-bar-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-
-  /* ===== BUTTONS ===== */
-  button {
-    border: none; border-radius: 12px; padding: 10px 18px;
-    font-size: 0.95rem; font-weight: 700; cursor: pointer;
-    font-family: var(--font-main);
-    transition: transform 0.12s, box-shadow 0.2s, opacity 0.2s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  button:hover { transform: scale(1.03); }
-  button:active { transform: scale(0.96); }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-success { background: var(--success); color: #1a1a2e; }
-  .btn-warning { background: var(--warning); color: #1a1a2e; }
-  .btn-info { background: var(--info); color: #fff; }
-  .btn-small { padding: 8px 14px; font-size: 0.85rem; border-radius: 10px; }
-  .btn-icon { padding: 8px 12px; font-size: 1.1rem; border-radius: 12px; background: var(--surface2); color: var(--text); }
-
-  /* ===== VIEW / LAYOUT TABS ===== */
-  .view-tabs { display: flex; gap: 3px; background: var(--surface2); border-radius: 12px; padding: 3px; }
-  .view-tab { padding: 8px 14px; border-radius: 9px; background: transparent; color: var(--text-dim); font-size: 0.88rem; }
-  .view-tab.active { background: var(--accent); color: #fff; }
-  .layout-toggles { display: flex; gap: 3px; background: var(--surface2); border-radius: 10px; padding: 3px; }
-  .layout-btn { padding: 6px 10px; border-radius: 8px; background: transparent; color: var(--text-dim); font-size: 1rem; }
-  .layout-btn.active { background: var(--info); color: #fff; }
-
-  /* ===== PROFILE BAR ===== */
-  .profile-bar {
-    display: flex; gap: 8px; padding: 10px 20px; align-items: center;
-    background: var(--surface); border-bottom: 1px solid var(--surface2); overflow-x: auto;
-  }
-  .profile-chip {
-    padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700;
-    background: var(--surface2); color: var(--text-dim); white-space: nowrap; cursor: pointer;
-    font-family: var(--font-main); border: 2px solid transparent;
-  }
-  .profile-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .profile-chip.add { background: transparent; border: 2px dashed var(--text-dim); color: var(--text-dim); }
-
-  /* ===== REWARD/STREAK BAR ===== */
-  .reward-bar {
-    display: flex; gap: 16px; padding: 12px 20px; align-items: center;
-    background: var(--surface); border-bottom: 1px solid var(--surface2);
-    font-size: 0.9rem; flex-wrap: wrap;
-  }
-  .reward-stars { font-size: 1.2rem; }
-  .streak-badge {
-    background: linear-gradient(135deg, var(--warning), var(--accent));
-    color: #fff; padding: 4px 12px; border-radius: 20px; font-weight: 800; font-size: 0.85rem;
-  }
-  .reward-progress {
-    flex: 1; min-width: 120px; display: flex; align-items: center; gap: 8px;
-  }
-  .reward-progress-bar {
-    flex: 1; height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden;
-  }
-  .reward-progress-fill {
-    height: 100%; background: linear-gradient(90deg, var(--warning), var(--accent));
-    border-radius: 5px; transition: width 0.5s;
-  }
-
-  /* ===== TASK GRID ===== */
-  .task-container { padding: 20px; }
-  .task-grid { display: grid; gap: 18px; }
-  .task-grid.layout-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-  .task-grid.layout-vertical { grid-template-columns: 1fr; max-width: 600px; margin: 0 auto; }
-  .task-grid.layout-horizontal { grid-auto-flow: column; grid-auto-columns: 300px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; }
-  .task-grid.layout-horizontal .task-card { scroll-snap-align: center; }
-
-  /* ===== TASK CARD ===== */
-  .task-card {
-    position: relative; border-radius: var(--radius); overflow: hidden;
-    background: var(--surface); border: 2px solid var(--surface2);
-    transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
-    min-height: 200px;
-  }
-  .task-card.active { border-color: var(--accent); box-shadow: 0 0 24px rgba(233,69,96,0.3); transform: scale(1.01); }
-  .task-card.completed { border-color: var(--success); }
-  .task-card.completed .task-content { opacity: 0.7; }
-
-  .task-fill {
-    position: absolute; bottom: 0; left: 0; right: 0; height: 0%;
-    transition: height 0.5s linear; opacity: 0.18; z-index: 0;
-  }
-
-  /* Photo reveal overlay */
-  .task-photo-reveal {
-    position: absolute; inset: 0; z-index: 0; overflow: hidden;
-    background-size: cover; background-position: center;
-  }
-  .task-photo-mask {
-    position: absolute; inset: 0;
-    background: var(--surface);
-    transition: clip-path 0.5s linear;
-    clip-path: inset(0 0 0 0);
-  }
-
-  .task-content {
-    position: relative; z-index: 1; padding: 18px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-
-  .task-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .task-emoji { font-size: 2rem; line-height: 1; }
-  .task-photo-icon { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; border: 2px solid var(--surface2); }
-  .task-title { font-size: 1.2rem; font-weight: 800; flex: 1; line-height: 1.3; }
-  .task-order { font-size: 0.72rem; color: var(--text-dim); background: var(--surface2); border-radius: 6px; padding: 2px 8px; }
-
-  .task-time-display {
-    font-size: 3rem; font-weight: 800; text-align: center;
-    font-variant-numeric: tabular-nums; letter-spacing: 2px; padding: 8px 0;
-  }
-
-  .task-progress-bar { height: 12px; background: var(--surface2); border-radius: 6px; overflow: hidden; }
-  .task-progress-fill { height: 100%; border-radius: 6px; transition: width 0.5s linear; width: 0%; }
-
-  .task-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-  .task-status { text-align: center; font-size: 0.85rem; color: var(--text-dim); font-weight: 600; }
-
-  .task-card.active .task-title { color: var(--accent); }
   :root.light .task-time-display { color: #000 !important; }
   :root.light .task-title { color: #000 !important; }
   :root.light .task-card.active .task-title { color: var(--accent) !important; }
 
-  /* Transition warning */
-  .transition-warning {
-    position: fixed; top: 0; left: 0; right: 0;
-    background: linear-gradient(135deg, var(--warning), var(--accent));
-    color: #fff; text-align: center; padding: 14px;
-    font-size: 1.1rem; font-weight: 800; z-index: 50;
-    transform: translateY(-100%); transition: transform 0.3s;
-  }
-  .transition-warning.show { transform: translateY(0); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== TOP BAR ===== */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 2px solid var(--surface2);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .top-bar h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #e94560, #f0c040, #4ecca3, #7b68ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .top-bar-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* ===== BUTTONS ===== */
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  button:hover { transform: scale(1.04); }
+  button:active { transform: scale(0.97); }
+
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-success { background: var(--success); color: #1a1a2e; }
+  .btn-warning { background: var(--warning); color: #1a1a2e; }
+  .btn-info { background: var(--info); color: #fff; }
+  .btn-small { padding: 6px 12px; font-size: 0.82rem; border-radius: 8px; }
+  .btn-icon { padding: 8px 12px; font-size: 1.1rem; border-radius: 10px; background: var(--surface2); color: var(--text); }
+
+  /* ===== VIEW TABS ===== */
+  .view-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .view-tab {
+    padding: 8px 16px;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .view-tab.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ===== LAYOUT TOGGLES ===== */
+  .layout-toggles {
+    display: flex;
+    gap: 4px;
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 3px;
+  }
+  .layout-btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 1rem;
+  }
+  .layout-btn.active {
+    background: var(--info);
+    color: #fff;
+  }
+
+  /* ===== TASK GRID ===== */
+  .task-container {
+    padding: 24px;
+  }
+
+  .task-grid {
+    display: grid;
+    gap: 20px;
+  }
+  .task-grid.layout-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .task-grid.layout-vertical {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .task-grid.layout-horizontal {
+    grid-auto-flow: column;
+    grid-auto-columns: 300px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+  }
+
+  /* ===== TASK CARD ===== */
+  .task-card {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 2px solid var(--surface2);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    min-height: 200px;
+  }
+  .task-card.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.25);
+  }
+  .task-card.completed {
+    border-color: var(--success);
+    opacity: 0.75;
+  }
+
+  /* Fill overlay */
+  .task-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    transition: height 0.5s linear;
+    opacity: 0.2;
+    z-index: 0;
+    border-radius: 0 0 16px 16px;
+  }
+
+  .task-content {
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+  }
+
+  .task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .task-emoji {
+    font-size: 2rem;
+    line-height: 1;
+  }
+  .task-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex: 1;
+    line-height: 1.3;
+  }
+  .task-order {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border-radius: 6px;
+    padding: 2px 8px;
+    white-space: nowrap;
+  }
+
+  .task-time-display {
+    font-size: 3rem;
+    font-weight: 800;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    padding: 10px 0;
+  }
+
+  /* Progress bar */
+  .task-progress-bar {
+    height: 12px;
+    background: var(--surface2);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .task-progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s linear;
+    width: 0%;
+  }
+
+  .task-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .task-status {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  /* ===== ACTIVE INDICATOR ===== */
+  .task-card.active .task-title {
+    color: var(--accent);
+  }
+  .task-card.active .task-time-display {
+    color: #fff;
+  }
+
+  /* Almost done pulse */
   @keyframes pulse-warning {
-    0%,100% { box-shadow: 0 0 20px rgba(240,192,64,0.3); }
-    50% { box-shadow: 0 0 40px rgba(240,192,64,0.6); }
+    0%, 100% { box-shadow: 0 0 20px rgba(240, 192, 64, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(240, 192, 64, 0.6); }
   }
-  .task-card.warning { animation: pulse-warning 1s infinite; border-color: var(--warning); }
-
-  @keyframes celebrate {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+  .task-card.warning {
+    animation: pulse-warning 1s infinite;
+    border-color: var(--warning);
   }
-  .task-card.just-completed { animation: celebrate 0.5s ease; }
 
   /* ===== MODAL ===== */
   .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7); z-index: 100;
-    align-items: center; justify-content: center; padding: 20px;
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
   }
   .modal-overlay.open { display: flex; }
+
   .modal {
-    background: var(--surface); border-radius: 20px; padding: 28px;
-    max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
     border: 2px solid var(--surface2);
   }
-  .modal h2 { font-size: 1.3rem; margin-bottom: 18px; color: var(--accent); }
-  .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dim); margin-bottom: 5px; }
-  .form-group input, .form-group select, .form-group textarea {
-    width: 100%; padding: 10px 14px; border-radius: 10px;
-    border: 2px solid var(--surface2); background: var(--bg);
-    color: var(--text); font-size: 1rem; font-family: var(--font-main);
+  .modal h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--accent);
   }
-  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--info); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .color-picker-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 2px solid var(--surface2);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--info);
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .color-picker-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
   .color-swatch {
-    width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
-    border: 3px solid transparent; transition: border-color 0.2s, transform 0.12s;
-    display: flex; align-items: center; justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: border-color 0.2s, transform 0.15s;
   }
   .color-swatch:hover { transform: scale(1.1); }
   .color-swatch.selected { border-color: #fff; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
-  .photo-upload-area {
-    border: 2px dashed var(--text-dim); border-radius: 12px; padding: 20px;
-    text-align: center; cursor: pointer; color: var(--text-dim);
-    transition: border-color 0.2s;
-  }
-  .photo-upload-area:hover { border-color: var(--accent); }
-  .photo-upload-area img { max-width: 100%; max-height: 120px; border-radius: 8px; margin-top: 8px; }
 
-  /* ===== WEEK BAR ===== */
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+
+  /* ===== SCHEDULE BAR (WEEKLY) ===== */
   .week-bar {
-    display: flex; gap: 4px; padding: 10px 20px; overflow-x: auto;
-    background: var(--surface); border-bottom: 1px solid var(--surface2);
+    display: flex;
+    gap: 4px;
+    padding: 12px 24px;
+    overflow-x: auto;
+    background: var(--surface);
+    border-bottom: 1px solid var(--surface2);
   }
   .day-btn {
-    padding: 8px 14px; border-radius: 10px; background: var(--surface2);
-    color: var(--text-dim); font-weight: 700; font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
-  .day-btn.active { background: var(--info); color: #fff; }
-  .day-btn.today { border: 2px solid var(--warning); }
+  .day-btn.active {
+    background: var(--info);
+    color: #fff;
+  }
+  .day-btn.today {
+    border: 2px solid var(--warning);
+  }
 
   /* ===== GLOBAL CONTROLS ===== */
   .global-controls {
-    display: flex; gap: 10px; padding: 14px 20px;
-    background: var(--surface); border-top: 2px solid var(--surface2);
-    position: sticky; bottom: 0; justify-content: center; flex-wrap: wrap;
+    display: flex;
+    gap: 10px;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-top: 2px solid var(--surface2);
+    position: sticky;
+    bottom: 0;
+    justify-content: center;
+    flex-wrap: wrap;
   }
-
-  /* ===== SETTINGS PANEL ===== */
-  .settings-panel {
-    display: none; position: fixed; right: 0; top: 0; bottom: 0;
-    width: 320px; max-width: 90vw; background: var(--surface);
-    border-left: 2px solid var(--surface2); z-index: 90;
-    padding: 24px; overflow-y: auto; box-shadow: -4px 0 20px rgba(0,0,0,0.3);
-    transition: transform 0.3s;
-  }
-  .settings-panel.open { display: block; }
-  .settings-panel h3 { color: var(--accent); margin-bottom: 16px; font-size: 1.2rem; }
-  .setting-row { margin-bottom: 16px; }
-  .setting-row label { font-size: 0.85rem; font-weight: 700; color: var(--text-dim); display: block; margin-bottom: 6px; }
-  .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .theme-card {
-    padding: 12px 8px; border-radius: 12px; text-align: center; cursor: pointer;
-    border: 2px solid var(--surface2); font-size: 0.8rem; font-weight: 700;
-    color: var(--text-dim); transition: border-color 0.2s;
-    font-family: var(--font-main);
-    background: var(--surface2);
-  }
-  .theme-card.active { border-color: var(--accent); color: var(--accent); }
-  .theme-card .theme-preview {
-    width: 100%; height: 24px; border-radius: 6px; margin-bottom: 6px;
-  }
-  .toggle-switch {
-    position: relative; width: 52px; height: 28px; display: inline-block;
-  }
-  .toggle-switch input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider {
-    position: absolute; inset: 0; background: var(--surface2); border-radius: 14px;
-    cursor: pointer; transition: background 0.3s;
-  }
-  .toggle-slider::before {
-    content: ''; position: absolute; width: 22px; height: 22px;
-    left: 3px; top: 3px; background: #fff; border-radius: 50%;
-    transition: transform 0.3s;
-  }
-  .toggle-switch input:checked + .toggle-slider { background: var(--success); }
-  .toggle-switch input:checked + .toggle-slider::before { transform: translateX(24px); }
-
-  /* ===== KID LOCK ===== */
-  .lock-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-    z-index: 200; align-items: center; justify-content: center;
-  }
-  .lock-overlay.open { display: flex; }
-  .lock-box {
-    background: var(--surface); border-radius: 20px; padding: 30px;
-    text-align: center; max-width: 300px; width: 90%;
-  }
-  .lock-box h3 { margin-bottom: 16px; }
-  .pin-dots { display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; }
-  .pin-dot {
-    width: 18px; height: 18px; border-radius: 50%;
-    background: var(--surface2); transition: background 0.2s;
-  }
-  .pin-dot.filled { background: var(--accent); }
-  .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .pin-key {
-    padding: 16px; font-size: 1.4rem; font-weight: 800;
-    border-radius: 14px; background: var(--surface2); color: var(--text);
-    border: none; cursor: pointer; font-family: var(--font-main);
-    min-height: 56px;
-  }
-  .pin-key:active { background: var(--accent); color: #fff; }
 
   /* ===== EMPTY STATE ===== */
-  .empty-state { text-align: center; padding: 60px 24px; color: var(--text-dim); }
-  .empty-state .emoji { font-size: 3.5rem; margin-bottom: 12px; }
-  .empty-state p { font-size: 1.05rem; margin-bottom: 20px; }
+  .empty-state {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-dim);
+  }
+  .empty-state .emoji { font-size: 4rem; margin-bottom: 16px; }
+  .empty-state p { font-size: 1.1rem; margin-bottom: 24px; }
 
-  .save-indicator { font-size: 0.8rem; color: var(--success); opacity: 0; transition: opacity 0.3s; }
+  /* ===== SAVE/LOAD INDICATOR ===== */
+  .save-indicator {
+    font-size: 0.8rem;
+    color: var(--success);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
   .save-indicator.show { opacity: 1; }
 
-  /* ===== RESPONSIVE — MOBILE ===== */
-  @media (max-width: 600px) {
-    .top-bar { padding: 12px 14px; flex-direction: column; align-items: stretch; gap: 10px; }
-    .top-bar h1 { font-size: 1.25rem; text-align: center; }
-    .top-bar-controls { justify-content: center; }
-    .view-tabs { width: 100%; justify-content: center; }
-    .view-tab { flex: 1; text-align: center; padding: 10px 8px; }
-    .task-container { padding: 12px; }
-    .task-grid.layout-grid { grid-template-columns: 1fr; }
-    .task-grid.layout-horizontal { grid-auto-columns: 85vw; }
-    .task-card { min-height: 180px; }
-    .task-time-display { font-size: 2.5rem; }
-    button { min-height: 48px; }
-    .btn-small { min-height: 48px; padding: 12px 16px; }
+  /* ===== RESPONSIVE ===== */
+
+  /* TABLET (601px - 1024px) */
+  @media (min-width: 601px) and (max-width: 1024px) {
+    .top-bar { padding: 14px 20px; }
+    .top-bar h1 { font-size: 1.4rem; }
+    .task-grid.layout-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .task-container { padding: 20px; }
+    .task-time-display { font-size: 2.8rem; }
+    .task-card { min-height: 190px; }
+    button { padding: 12px 20px; min-height: 48px; }
+    .btn-small { padding: 10px 16px; min-height: 44px; font-size: 0.9rem; }
     .btn-icon { min-height: 48px; min-width: 48px; }
-    .global-controls button { flex: 1; min-width: 0; font-size: 0.88rem; }
-    .modal { border-radius: 16px 16px 0 0; max-height: 85vh; }
-    .modal-overlay { align-items: flex-end; padding: 0; }
-    .modal-actions button { flex: 1; min-height: 48px; }
-    .profile-bar { padding: 8px 14px; }
-    .reward-bar { padding: 10px 14px; font-size: 0.85rem; }
-    .settings-panel { width: 100%; max-width: 100%; }
   }
+
+  /* DESKTOP (1025px+) */
+  @media (min-width: 1025px) {
+    .task-grid.layout-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+    .task-container { padding: 30px 40px; }
+    .task-card { min-height: 220px; }
+    .task-time-display { font-size: 3.2rem; }
+    .top-bar { padding: 16px 32px; }
+  }
+
+  /* LARGE DESKTOP (1400px+) */
+  @media (min-width: 1400px) {
+    .task-grid.layout-grid {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .task-container { padding: 36px 60px; }
+  }
+
+  /* MOBILE (600px and below) */
+  @media (max-width: 600px) {
+    .top-bar {
+      padding: 12px 14px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .top-bar h1 {
+      font-size: 1.3rem;
+      text-align: center;
+    }
+    .top-bar-controls {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .view-tabs { width: 100%; justify-content: center; }
+    .view-tab { flex: 1; text-align: center; padding: 10px 8px; font-size: 0.85rem; }
+    .layout-toggles { justify-content: center; }
+
+    .task-container { padding: 12px; }
+    .task-grid { gap: 14px; }
+    .task-grid.layout-grid {
+      grid-template-columns: 1fr;
+    }
+    .task-grid.layout-horizontal {
+      grid-auto-columns: 85vw;
+    }
+
+    .task-card { min-height: 180px; }
+    .task-content { padding: 16px; }
+    .task-emoji { font-size: 1.8rem; }
+    .task-title { font-size: 1.15rem; }
+    .task-time-display { font-size: 2.6rem; padding: 8px 0; }
+    .task-progress-bar { height: 14px; border-radius: 7px; }
+    .task-progress-fill { border-radius: 7px; }
+
+    /* Big touch targets — critical for accessibility */
+    button { min-height: 48px; padding: 12px 18px; font-size: 1rem; }
+    .btn-small { min-height: 48px; padding: 12px 16px; font-size: 0.95rem; border-radius: 10px; }
+    .btn-icon { min-height: 48px; min-width: 48px; font-size: 1.2rem; }
+    .task-controls { gap: 10px; }
+
+    .global-controls {
+      padding: 14px;
+      gap: 8px;
+    }
+    .global-controls button { flex: 1; min-width: 0; font-size: 0.9rem; padding: 12px 10px; }
+
+    /* Modal — full width on mobile */
+    .modal {
+      border-radius: 16px 16px 0 0;
+      max-height: 85vh;
+      padding: 24px 20px;
+    }
+    .modal-overlay { align-items: flex-end; padding: 0; }
+    .form-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-group input, .form-group select {
+      padding: 12px 14px;
+      font-size: 1.05rem;
+      min-height: 48px;
+    }
+    .color-swatch { width: 42px; height: 42px; }
+    .modal-actions { flex-wrap: wrap; }
+    .modal-actions button { flex: 1; min-height: 48px; }
+
+    /* Week bar */
+    .week-bar { padding: 10px 12px; }
+    .day-btn { padding: 10px 12px; font-size: 0.85rem; min-height: 44px; }
+  }
+
+  /* SMALL MOBILE (380px and below) */
   @media (max-width: 380px) {
     .top-bar h1 { font-size: 1.1rem; }
-    .task-time-display { font-size: 2.1rem; }
-  }
-  @media (min-width: 601px) and (max-width: 1024px) {
-    .task-grid.layout-grid { grid-template-columns: repeat(2, 1fr); }
-    button { min-height: 48px; }
-  }
-  @media (min-width: 1025px) {
-    .task-grid.layout-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-    .task-container { padding: 30px 40px; }
+    .task-time-display { font-size: 2.2rem; }
+    .task-title { font-size: 1.05rem; }
+    .task-emoji { font-size: 1.5rem; }
+    .task-container { padding: 8px; }
+    .view-tab { padding: 8px 6px; font-size: 0.8rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- TRANSITION WARNING BANNER -->
-<div class="transition-warning" id="transitionWarning"></div>
-
-<!-- KID LOCK OVERLAY -->
-<div class="lock-overlay" id="lockOverlay">
-  <div class="lock-box">
-    <h3>🔒 Enter PIN to Unlock</h3>
-    <div class="pin-dots" id="pinDots"></div>
-    <div class="pin-pad" id="pinPad"></div>
-    <p id="pinError" style="color:var(--accent);margin-top:12px;font-size:0.85rem;opacity:0;">Wrong PIN</p>
-  </div>
-</div>
-
 <!-- TOP BAR -->
 <div class="top-bar">
-  <h1>🌟 TaskBuddy</h1>
+  <h1>✨ Visual Task Timer</h1>
   <div class="top-bar-controls">
     <div class="view-tabs">
       <button class="view-tab active" data-view="daily" onclick="switchView('daily')">📋 Daily</button>
       <button class="view-tab" data-view="weekly" onclick="switchView('weekly')">📅 Weekly</button>
     </div>
     <div class="layout-toggles">
-      <button class="layout-btn active" data-layout="grid" onclick="switchLayout('grid')">⊞</button>
-      <button class="layout-btn" data-layout="vertical" onclick="switchLayout('vertical')">☰</button>
-      <button class="layout-btn" data-layout="horizontal" onclick="switchLayout('horizontal')">⫼</button>
+      <button class="layout-btn active" data-layout="grid" onclick="switchLayout('grid')" title="Grid">⊞</button>
+      <button class="layout-btn" data-layout="vertical" onclick="switchLayout('vertical')" title="Vertical">☰</button>
+      <button class="layout-btn" data-layout="horizontal" onclick="switchLayout('horizontal')" title="Horizontal">⫼</button>
     </div>
-    <button class="btn-primary" onclick="openAddModal()">＋ Add</button>
-    <button class="btn-icon" id="themeToggle" onclick="toggleTheme()">🌙</button>
-    <button class="btn-icon" onclick="openSettings()">⚙️</button>
-    <button class="btn-icon" id="lockBtn" onclick="toggleLock()">🔓</button>
-    <span class="save-indicator" id="saveIndicator">💾</span>
+    <button class="btn-primary" onclick="openAddModal()">＋ Add Task</button>
+    <button class="btn-icon" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">🌙</button>
+    <span class="save-indicator" id="saveIndicator">💾 Saved</span>
   </div>
 </div>
 
-<!-- PROFILE BAR -->
-<div class="profile-bar" id="profileBar"></div>
-
-<!-- REWARD BAR -->
-<div class="reward-bar" id="rewardBar"></div>
-
-<!-- WEEK BAR -->
+<!-- WEEK BAR (hidden by default) -->
 <div class="week-bar" id="weekBar" style="display:none;"></div>
 
 <!-- TASK AREA -->
 <div class="task-container">
-  <div class="task-grid layout-grid" id="taskGrid"></div>
+  <div class="task-grid layout-grid" id="taskGrid">
+    <div class="empty-state" id="emptyState">
+      <div class="emoji">🌈</div>
+      <p>No tasks yet! Add your first task to get started.</p>
+      <button class="btn-primary" onclick="openAddModal()">＋ Add First Task</button>
+    </div>
+  </div>
 </div>
 
 <!-- GLOBAL CONTROLS -->
-<div class="global-controls" id="globalControls">
+<div class="global-controls">
   <button class="btn-success" onclick="startAll()">▶ Start All</button>
-  <button class="btn-warning" onclick="pauseAll()">⏸ Pause</button>
-  <button class="btn-info" onclick="resetAll()">↺ Reset</button>
-  <button class="btn-icon" onclick="exportSchedule()">💾</button>
-  <button class="btn-icon" onclick="document.getElementById('importInput').click()">📂</button>
+  <button class="btn-warning" onclick="pauseAll()">⏸ Pause All</button>
+  <button class="btn-info" onclick="resetAll()">↺ Reset All</button>
+  <button class="btn-icon" onclick="exportSchedule()" title="Save Schedule">💾</button>
+  <button class="btn-icon" onclick="document.getElementById('importInput').click()" title="Load Schedule">📂</button>
   <input type="file" id="importInput" accept=".json" style="display:none" onchange="importSchedule(event)">
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSfoVeJdePHQUAPQONdMAyuZIoKEvv4u2k5eXg6DOoDmM1otdQ/viewform" target="_blank" style="text-decoration:none;"><button class="btn-icon" title="Send Feedback">💬</button></a>
 </div>
 
-<!-- SETTINGS PANEL -->
-<div class="settings-panel" id="settingsPanel">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-    <h3>⚙️ Settings</h3>
-    <button class="btn-icon" onclick="closeSettings()">✕</button>
-  </div>
-
-  <div class="setting-row">
-    <label>Color Theme</label>
-    <div class="theme-grid" id="themeGrid">
-      <div class="theme-card active" data-theme="default" onclick="setTheme('default')">
-        <div class="theme-preview" style="background:linear-gradient(135deg,#1a1a2e,#e94560)"></div>Default
-      </div>
-      <div class="theme-card" data-theme="ocean" onclick="setTheme('ocean')">
-        <div class="theme-preview" style="background:linear-gradient(135deg,#0a1628,#00b4d8)"></div>Ocean
-      </div>
-      <div class="theme-card" data-theme="jungle" onclick="setTheme('jungle')">
-        <div class="theme-preview" style="background:linear-gradient(135deg,#0b1a0b,#8ac926)"></div>Jungle
-      </div>
-      <div class="theme-card" data-theme="space" onclick="setTheme('space')">
-        <div class="theme-preview" style="background:linear-gradient(135deg,#0b0025,#3a86ff)"></div>Space
-      </div>
-      <div class="theme-card" data-theme="candy" onclick="setTheme('candy')">
-        <div class="theme-preview" style="background:linear-gradient(135deg,#2d1b33,#ff6b9d)"></div>Candy
-      </div>
-    </div>
-  </div>
-
-  <div class="setting-row">
-    <label>Dyslexia-Friendly Font</label>
-    <label class="toggle-switch">
-      <input type="checkbox" id="dyslexicToggle" onchange="toggleDyslexic(this.checked)">
-      <span class="toggle-slider"></span>
-    </label>  </div>
-
-  <div class="setting-row">
-    <label>Transition Warning (seconds before end)</label>
-    <input type="number" id="transitionWarnSec" value="10" min="0" max="60" style="width:80px;padding:8px;border-radius:8px;border:2px solid var(--surface2);background:var(--bg);color:var(--text);font-family:var(--font-main);" onchange="saveSettings()">
-  </div>
-
-  <div class="setting-row">
-    <label>Kid Lock PIN (4 digits)</label>
-    <input type="password" id="pinInput" maxlength="4" placeholder="Set PIN" style="width:120px;padding:8px;border-radius:8px;border:2px solid var(--surface2);background:var(--bg);color:var(--text);font-family:var(--font-main);letter-spacing:6px;text-align:center;" onchange="saveSettings()">
-  </div>
-
-  <div class="setting-row">
-    <label>Stars Needed for Reward</label>
-    <input type="number" id="rewardGoal" value="10" min="1" max="100" style="width:80px;padding:8px;border-radius:8px;border:2px solid var(--surface2);background:var(--bg);color:var(--text);font-family:var(--font-main);" onchange="saveSettings()">
-  </div>
-
-  <div class="setting-row">
-    <label>Reward Message</label>
-    <input type="text" id="rewardMessage" value="🎉 Amazing! Time for your reward!" placeholder="Custom reward message" style="padding:8px;border-radius:8px;border:2px solid var(--surface2);background:var(--bg);color:var(--text);font-family:var(--font-main);width:100%;" onchange="saveSettings()">
-  </div>
-</div>
-
-<!-- ADD/EDIT TASK MODAL -->
+<!-- ADD/EDIT MODAL -->
 <div class="modal-overlay" id="taskModal">
   <div class="modal">
     <h2 id="modalTitle">Add New Task</h2>
     <div class="form-group">
       <label>Task Name</label>
-      <input type="text" id="taskName" placeholder="e.g., Brush Teeth" maxlength="50">
+      <input type="text" id="taskName" placeholder="e.g., Morning Routine" maxlength="50">
     </div>
     <div class="form-group">
-      <label>Icon</label>
+      <label>Emoji Icon</label>
       <div class="color-picker-row" id="emojiPicker">
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="⏰" onclick="pickEmoji(this)">⏰</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="📚" onclick="pickEmoji(this)">📚</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🍳" onclick="pickEmoji(this)">🍳</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🧹" onclick="pickEmoji(this)">🧹</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🎮" onclick="pickEmoji(this)">🎮</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🛁" onclick="pickEmoji(this)">🛁</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🏃" onclick="pickEmoji(this)">🏃</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="💊" onclick="pickEmoji(this)">💊</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🎨" onclick="pickEmoji(this)">🎨</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="😴" onclick="pickEmoji(this)">😴</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🎵" onclick="pickEmoji(this)">🎵</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="✏️" onclick="pickEmoji(this)">✏️</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🦷" onclick="pickEmoji(this)">🦷</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="👕" onclick="pickEmoji(this)">👕</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🍎" onclick="pickEmoji(this)">🍎</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-emoji="🐕" onclick="pickEmoji(this)">🐕</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="⏰" onclick="pickEmoji(this)">⏰</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="📚" onclick="pickEmoji(this)">📚</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="🍳" onclick="pickEmoji(this)">🍳</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="🧹" onclick="pickEmoji(this)">🧹</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="🎮" onclick="pickEmoji(this)">🎮</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="🛁" onclick="pickEmoji(this)">🛁</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="🏃" onclick="pickEmoji(this)">🏃</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="💊" onclick="pickEmoji(this)">💊</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="🎨" onclick="pickEmoji(this)">🎨</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="😴" onclick="pickEmoji(this)">😴</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="🎵" onclick="pickEmoji(this)">🎵</span>
+        <span class="color-swatch" style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;background:var(--surface2);width:42px;height:42px;" data-emoji="✏️" onclick="pickEmoji(this)">✏️</span>
       </div>
     </div>
     <div class="form-row">
@@ -551,31 +630,13 @@
       </div>
     </div>
     <div class="form-group">
-      <label>Sound</label>
+      <label>Sound Alert</label>
       <select id="taskSound">
         <option value="chime">🔔 Gentle Chime</option>
         <option value="ding">✨ Ding</option>
-        <option value="bell">🎵 Bell</option>
-        <option value="success">🎉 Fanfare</option>
-        <option value="applause">👏 Applause</option>
+        <option value="bell">🔔 Bell</option>
+        <option value="success">🎉 Success Fanfare</option>
       </select>
-      <button class="btn-small btn-info" style="margin-top:6px;" onclick="playSound(document.getElementById('taskSound').value)">▶ Preview</button>
-    </div>
-    <div class="form-group">
-      <label>Reward Photo (reveals as timer completes)</label>
-      <div class="photo-upload-area" id="photoUploadArea" onclick="document.getElementById('photoInput').click()">
-        📷 Tap to add a reward photo
-        <img id="photoPreview" style="display:none;">
-        <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Task Photo (shows what to do)</label>
-      <div class="photo-upload-area" id="taskPhotoUploadArea" onclick="document.getElementById('taskPhotoInput').click()">
-        🖼️ Tap to add a task instruction photo
-        <img id="taskPhotoPreview" style="display:none;">
-        <input type="file" id="taskPhotoInput" accept="image/*" style="display:none" onchange="handleTaskPhotoUpload(event)">
-      </div>
     </div>
     <div class="form-group" id="daySelectGroup" style="display:none;">
       <label>Day(s)</label>
@@ -593,393 +654,515 @@
     <div class="modal-actions">
       <button class="btn-icon" onclick="closeModal()">Cancel</button>
       <button class="btn-success" id="modalSaveBtn" onclick="saveTask()">Add Task</button>
-      <button class="btn-primary" id="modalDeleteBtn" style="display:none;background:#c0392b;" onclick="deleteTask()">🗑</button>
+      <button class="btn-primary" id="modalDeleteBtn" style="display:none;background:#c0392b;" onclick="deleteTask()">🗑 Delete</button>
     </div>
-  </div>
-</div>
-
-<!-- PROFILE MODAL -->
-<div class="modal-overlay" id="profileModal">
-  <div class="modal">
-    <h2 id="profileModalTitle">Add Profile</h2>
-    <div class="form-group">
-      <label>Name</label>
-      <input type="text" id="profileName" placeholder="e.g., Alex" maxlength="20">
-    </div>
-    <div class="form-group">
-      <label>Emoji</label>
-      <div class="color-picker-row">
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👦" onclick="pickProfileEmoji(this)">👦</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👧" onclick="pickProfileEmoji(this)">👧</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🧒" onclick="pickProfileEmoji(this)">🧒</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👨" onclick="pickProfileEmoji(this)">👨</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="👩" onclick="pickProfileEmoji(this)">👩</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🐱" onclick="pickProfileEmoji(this)">🐱</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🦊" onclick="pickProfileEmoji(this)">🦊</span>
-        <span class="color-swatch" style="font-size:1.5rem;background:var(--surface2);width:42px;height:42px;" data-pemoji="🐻" onclick="pickProfileEmoji(this)">🐻</span>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-icon" onclick="closeProfileModal()">Cancel</button>
-      <button class="btn-success" onclick="saveProfile()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- REWARD CELEBRATION MODAL -->
-<div class="modal-overlay" id="rewardModal">
-  <div class="modal" style="text-align:center;">
-    <div style="font-size:4rem;margin-bottom:12px;">🎉🌟🎉</div>
-    <h2 id="rewardModalMsg">Amazing! Time for your reward!</h2>
-    <p style="color:var(--text-dim);margin:12px 0;">You earned all your stars!</p>
-    <button class="btn-success" style="margin-top:12px;" onclick="claimReward()">🌟 Claim Reward!</button>
   </div>
 </div>
 
 <script>
 // ===== STATE =====
-let profiles = [{id:'default',name:'Default',emoji:'🧒',stars:0,streak:0,lastCompleteDate:null}];
-let activeProfileId = 'default';
 let tasks = [];
-let settings = { theme:'default', light:false, dyslexic:false, transitionWarn:10, pin:'', rewardGoal:10, rewardMsg:'🎉 Amazing! Time for your reward!', locked:false };
 let currentView = 'daily';
 let currentLayout = 'grid';
 let currentDay = new Date().getDay();
 let editingId = null;
 let selectedColor = '#e94560';
 let selectedEmoji = '⏰';
-let selectedProfileEmoji = '🧒';
 let selectedDays = [0,1,2,3,4,5,6];
 let timerIntervals = {};
-let rewardPhotoData = null;
-let taskPhotoData = null;
 
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-function activeProfile() { return profiles.find(p=>p.id===activeProfileId)||profiles[0]; }
-
 // ===== AUDIO =====
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
-function getAudioCtx() { if(!audioCtx) audioCtx=new AudioCtx(); return audioCtx; }
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
 
 function playSound(type) {
-  const ctx=getAudioCtx(), now=ctx.currentTime;
-  if(type==='chime'){[523.25,659.25,783.99].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0.3,now+i*0.15);g.gain.exponentialRampToValueAtTime(0.001,now+i*0.15+0.8);o.connect(g).connect(ctx.destination);o.start(now+i*0.15);o.stop(now+i*0.15+0.8);});}
-  else if(type==='ding'){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(0.4,now);g.gain.exponentialRampToValueAtTime(0.001,now+1);o.connect(g).connect(ctx.destination);o.start(now);o.stop(now+1);}
-  else if(type==='bell'){[660,880,1100].forEach(f=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0.25,now);g.gain.exponentialRampToValueAtTime(0.001,now+1.2);o.connect(g).connect(ctx.destination);o.start(now);o.stop(now+1.2);});}
-  else if(type==='success'){[523.25,587.33,659.25,783.99,1046.5].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.value=f;g.gain.setValueAtTime(0.15,now+i*0.1);g.gain.exponentialRampToValueAtTime(0.001,now+i*0.1+0.3);o.connect(g).connect(ctx.destination);o.start(now+i*0.1);o.stop(now+i*0.1+0.3);});}
-  else if(type==='applause'){for(let i=0;i<20;i++){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.value=200+Math.random()*600;const t=now+Math.random()*1.5;g.gain.setValueAtTime(0.04,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.15);o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+0.15);}}
-}
+  const ctx = getAudioCtx();
+  const now = ctx.currentTime;
 
-// ===== HELPERS =====
-function genId(){return'_'+Math.random().toString(36).substr(2,9);}
-function getVisibleTasks(){if(currentView==='weekly')return tasks.filter(t=>t.days&&t.days.includes(currentDay));return tasks;}
-function formatTime(s){const m=Math.floor(s/60),sec=s%60;return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
-
-// ===== PROFILES =====
-function renderProfiles(){
-  const bar=document.getElementById('profileBar');
-  bar.innerHTML=profiles.map(p=>`<button class="profile-chip ${p.id===activeProfileId?'active':''}" onclick="switchProfile('${p.id}')">${p.emoji} ${p.name}</button>`).join('')+`<button class="profile-chip add" onclick="openProfileModal()">＋</button>`;
-}
-function switchProfile(id){activeProfileId=id;loadProfileTasks();render();renderRewardBar();save();}
-function openProfileModal(){selectedProfileEmoji='🧒';document.getElementById('profileName').value='';document.getElementById('profileModal').classList.add('open');}
-function closeProfileModal(){document.getElementById('profileModal').classList.remove('open');}
-function pickProfileEmoji(el){selectedProfileEmoji=el.dataset.pemoji;el.parentElement.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.pemoji===selectedProfileEmoji));}
-function saveProfile(){
-  const name=document.getElementById('profileName').value.trim()||'Profile';
-  const p={id:genId(),name,emoji:selectedProfileEmoji,stars:0,streak:0,lastCompleteDate:null,tasks:[]};
-  profiles.push(p);closeProfileModal();renderProfiles();save();
-}
-
-// ===== REWARDS =====
-function renderRewardBar(){
-  const p=activeProfile();
-  const goal=settings.rewardGoal||10;
-  const pct=Math.min((p.stars/goal)*100,100);
-  const streakText=p.streak>0?`<span class="streak-badge">🔥 ${p.streak} day streak</span>`:'';
-  document.getElementById('rewardBar').innerHTML=`
-    <span class="reward-stars">⭐ ${p.stars} stars</span>
-    ${streakText}
-    <div class="reward-progress">
-      <span style="font-size:0.8rem;color:var(--text-dim)">${p.stars}/${goal}</span>
-      <div class="reward-progress-bar"><div class="reward-progress-fill" style="width:${pct}%"></div></div>
-      <span>🏆</span>
-    </div>`;
-}
-function awardStar(){
-  const p=activeProfile(); p.stars++;
-  const today=new Date().toDateString();
-  if(p.lastCompleteDate===today){/* already counted */}
-  else if(p.lastCompleteDate===new Date(Date.now()-86400000).toDateString()){p.streak++;p.lastCompleteDate=today;}
-  else{p.streak=1;p.lastCompleteDate=today;}
-  renderRewardBar();save();
-  if(p.stars>=(settings.rewardGoal||10)){
-    document.getElementById('rewardModalMsg').textContent=settings.rewardMsg||'🎉 Amazing!';
-    document.getElementById('rewardModal').classList.add('open');
+  if (type === 'chime') {
+    [523.25, 659.25, 783.99].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, now + i*0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i*0.15 + 0.8);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i*0.15);
+      osc.stop(now + i*0.15 + 0.8);
+    });
+  } else if (type === 'ding') {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.4, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 1.0);
+  } else if (type === 'bell') {
+    [660, 880, 1100].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 1.2);
+    });
+  } else if (type === 'success') {
+    [523.25, 587.33, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, now + i*0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i*0.1 + 0.3);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i*0.1);
+      osc.stop(now + i*0.1 + 0.3);
+    });
   }
 }
-function claimReward(){activeProfile().stars=0;document.getElementById('rewardModal').classList.remove('open');renderRewardBar();save();}
+
+// ===== TASK MANAGEMENT =====
+function genId() { return '_' + Math.random().toString(36).substr(2, 9); }
+
+function getVisibleTasks() {
+  if (currentView === 'weekly') {
+    return tasks.filter(t => t.days && t.days.includes(currentDay));
+  }
+  return tasks;
+}
+
+function formatTime(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
 
 // ===== RENDER =====
-function render(){
-  const grid=document.getElementById('taskGrid');
-  const visible=getVisibleTasks();
-  if(!visible.length){
-    grid.innerHTML=`<div class="empty-state"><div class="emoji">🌈</div><p>No tasks yet! Add your first task to get started.</p><button class="btn-primary" onclick="openAddModal()">＋ Add First Task</button></div>`;
+function render() {
+  const grid = document.getElementById('taskGrid');
+  const visible = getVisibleTasks();
+
+  if (visible.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="emoji">🌈</div>
+        <p>No tasks yet! Add your first task to get started.</p>
+        <button class="btn-primary" onclick="openAddModal()">＋ Add First Task</button>
+      </div>`;
     return;
   }
-  grid.innerHTML=visible.map((task,index)=>{
-    const elapsed=task.totalSeconds-task.remaining;
-    const pct=task.totalSeconds>0?(elapsed/task.totalSeconds)*100:0;
-    const isWarning=task.running&&task.remaining<=settings.transitionWarn&&task.remaining>0;
-    const isDone=task.remaining<=0&&task.totalSeconds>0;
-    const cls=['task-card',task.running?'active':'',isDone?'completed':'',isWarning?'warning':''].filter(Boolean).join(' ');
-    const photoReveal=task.rewardPhoto?`<div class="task-photo-reveal" style="background-image:url(${task.rewardPhoto})"><div class="task-photo-mask" style="clip-path:inset(0 0 ${pct}% 0);background:var(--surface)"></div></div>`:'';
-    const taskImg=task.taskPhoto?`<img src="${task.taskPhoto}" class="task-photo-icon">`:`<span class="task-emoji">${task.emoji}</span>`;
-    return`<div class="${cls}" id="card-${task.id}" draggable="true" ondragstart="dragStart(event,'${task.id}')" ondragover="dragOver(event)" ondrop="drop(event,'${task.id}')">
-      ${photoReveal}
-      <div class="task-fill" style="background:${task.color};height:${pct}%"></div>
-      <div class="task-content">
-        <div class="task-header">${taskImg}<span class="task-title">${task.name}</span>${settings.locked?'':`<button class="btn-small" onclick="event.stopPropagation();deleteTaskDirect('${task.id}')" style="background:#c0392b;color:#fff;padding:4px 8px;font-size:0.75rem;min-height:auto;">✕</button>`}<span class="task-order">#${index+1}</span></div>
-        <div class="task-time-display" style="color:${isDone?'var(--success)':task.running?'#fff':'var(--text-dim)'}">${isDone?'✓ Done!':formatTime(task.remaining)}</div>
-        <div class="task-progress-bar"><div class="task-progress-fill" style="width:${pct}%;background:${task.color}"></div></div>
-        <div class="task-controls">
-          ${settings.locked?'':(isDone?`<button class="btn-small btn-success" onclick="resetTask('${task.id}')">↺ Restart</button>`:
-          `${task.running?`<button class="btn-small btn-warning" onclick="pauseTask('${task.id}')">⏸ Pause</button>`:`<button class="btn-small btn-success" onclick="startTask('${task.id}')">▶ Start</button>`}
-          <button class="btn-small btn-info" onclick="resetTask('${task.id}')">↺</button>`)}
-          ${settings.locked?'':`<button class="btn-small btn-icon" onclick="editTask('${task.id}')">✏️</button>`}
+
+  grid.innerHTML = visible.map((task, index) => {
+    const elapsed = task.totalSeconds - task.remaining;
+    const pct = task.totalSeconds > 0 ? (elapsed / task.totalSeconds) * 100 : 0;
+    const isWarning = task.running && task.remaining <= 10 && task.remaining > 0;
+    const isDone = task.remaining <= 0 && task.totalSeconds > 0;
+    const classes = [
+      'task-card',
+      task.running ? 'active' : '',
+      isDone ? 'completed' : '',
+      isWarning ? 'warning' : ''
+    ].filter(Boolean).join(' ');
+
+    return `
+      <div class="${classes}" style="--task-color: ${task.color}" id="card-${task.id}" draggable="true"
+           ondragstart="dragStart(event,'${task.id}')" ondragover="dragOver(event)" ondrop="drop(event,'${task.id}')">
+        <div class="task-fill" style="background:${task.color}; height:${pct}%"></div>
+        <div class="task-content">
+          <div class="task-header">
+            <span class="task-emoji">${task.emoji}</span>
+            <span class="task-title">${task.name}</span>
+            <span class="task-order">#${index + 1}</span>
+          </div>
+          <div class="task-time-display" style="color:${isDone ? 'var(--success)' : task.running ? '#fff' : 'var(--text-dim)'}">
+            ${isDone ? '✓ Done!' : formatTime(task.remaining)}
+          </div>
+          <div class="task-progress-bar">
+            <div class="task-progress-fill" style="width:${pct}%; background:${task.color}"></div>
+          </div>
+          <div class="task-controls">
+            ${!isDone ? `
+              ${task.running
+                ? `<button class="btn-small btn-warning" onclick="pauseTask('${task.id}')">⏸ Pause</button>`
+                : `<button class="btn-small btn-success" onclick="startTask('${task.id}')">▶ Start</button>`
+              }
+              <button class="btn-small btn-info" onclick="resetTask('${task.id}')">↺</button>
+            ` : `<button class="btn-small btn-success" onclick="resetTask('${task.id}')">↺ Restart</button>`}
+            <button class="btn-small btn-icon" onclick="editTask('${task.id}')">✏️</button>
+          </div>
+          <div class="task-status">${
+            isDone ? 'Completed! 🎉' :
+            task.running ? 'In progress...' :
+            task.remaining < task.totalSeconds ? 'Paused' : 'Ready'
+          }</div>
         </div>
-        <div class="task-status">${isDone?'Completed! ⭐':task.running?'In progress...':task.remaining<task.totalSeconds?'Paused':'Ready'}</div>
-      </div></div>`;
+      </div>
+    `;
   }).join('');
 }
 
-// ===== TIMERS =====
-function startTask(id){
-  const task=tasks.find(t=>t.id===id);if(!task||task.remaining<=0)return;
-  task.running=true;clearInterval(timerIntervals[id]);
-  timerIntervals[id]=setInterval(()=>{
+// ===== TIMER LOGIC =====
+function startTask(id) {
+  const task = tasks.find(t => t.id === id);
+  if (!task || task.remaining <= 0) return;
+  task.running = true;
+
+  clearInterval(timerIntervals[id]);
+  timerIntervals[id] = setInterval(() => {
     task.remaining--;
-    if(task.remaining===settings.transitionWarn){showTransition(`⏰ ${task.name} — ${settings.transitionWarn} seconds left!`);}
-    if(task.remaining<=0){
-      task.remaining=0;task.running=false;clearInterval(timerIntervals[id]);
-      playSound(task.sound||'chime');awardStar();
-      const card=document.getElementById('card-'+task.id);if(card)card.classList.add('just-completed');
-      const visible=getVisibleTasks();const idx=visible.findIndex(t=>t.id===id);
-      if(idx>=0&&idx<visible.length-1){setTimeout(()=>startTask(visible[idx+1].id),2000);}
+    if (task.remaining <= 0) {
+      task.remaining = 0;
+      task.running = false;
+      clearInterval(timerIntervals[id]);
+      playSound(task.sound || 'chime');
+      // Auto-advance to next task
+      const visible = getVisibleTasks();
+      const idx = visible.findIndex(t => t.id === id);
+      if (idx >= 0 && idx < visible.length - 1) {
+        const next = visible[idx + 1];
+        setTimeout(() => startTask(next.id), 1500);
+      }
     }
-    render();save();
-  },1000);
+    render();
+    save();
+  }, 1000);
+
   render();
 }
-function pauseTask(id){const t=tasks.find(t=>t.id===id);if(t){t.running=false;clearInterval(timerIntervals[id]);render();save();}}
-function resetTask(id){const t=tasks.find(t=>t.id===id);if(t){t.running=false;t.remaining=t.totalSeconds;clearInterval(timerIntervals[id]);render();save();}}
-function startAll(){const v=getVisibleTasks(),f=v.find(t=>t.remaining>0);if(f)startTask(f.id);}
-function pauseAll(){tasks.forEach(t=>{t.running=false;clearInterval(timerIntervals[t.id]);});render();save();}
-function resetAll(){tasks.forEach(t=>{t.running=false;t.remaining=t.totalSeconds;clearInterval(timerIntervals[t.id]);});render();save();}
 
-function showTransition(msg){const el=document.getElementById('transitionWarning');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+function pauseTask(id) {
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  task.running = false;
+  clearInterval(timerIntervals[id]);
+  render();
+  save();
+}
 
-// ===== DRAG & DROP =====
-let dragId=null;
-function dragStart(e,id){dragId=id;e.dataTransfer.effectAllowed='move';}
-function dragOver(e){e.preventDefault();}
-function drop(e,tid){e.preventDefault();if(!dragId||dragId===tid)return;const fi=tasks.findIndex(t=>t.id===dragId),ti=tasks.findIndex(t=>t.id===tid);if(fi<0||ti<0)return;const[m]=tasks.splice(fi,1);tasks.splice(ti,0,m);dragId=null;render();save();}
+function resetTask(id) {
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  task.running = false;
+  task.remaining = task.totalSeconds;
+  clearInterval(timerIntervals[id]);
+  render();
+  save();
+}
 
-// ===== PHOTO UPLOADS =====
-function handlePhotoUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{rewardPhotoData=ev.target.result;const img=document.getElementById('photoPreview');img.src=rewardPhotoData;img.style.display='block';};r.readAsDataURL(f);}
-function handleTaskPhotoUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{taskPhotoData=ev.target.result;const img=document.getElementById('taskPhotoPreview');img.src=taskPhotoData;img.style.display='block';};r.readAsDataURL(f);}
+function startAll() {
+  // Start the first non-completed task
+  const visible = getVisibleTasks();
+  const first = visible.find(t => t.remaining > 0);
+  if (first) startTask(first.id);
+}
 
-// ===== TASK MODAL =====
-function openAddModal(){
-  if(settings.locked)return;
-  editingId=null;rewardPhotoData=null;taskPhotoData=null;
-  document.getElementById('modalTitle').textContent='Add New Task';
-  document.getElementById('modalSaveBtn').textContent='Add Task';
-  document.getElementById('modalDeleteBtn').style.display='none';
-  document.getElementById('taskName').value='';
-  document.getElementById('taskMinutes').value=5;
-  document.getElementById('taskSeconds').value=0;
-  document.getElementById('taskSound').value='chime';
-  document.getElementById('photoPreview').style.display='none';
-  document.getElementById('taskPhotoPreview').style.display='none';
-  selectedColor='#e94560';selectedEmoji='⏰';selectedDays=[0,1,2,3,4,5,6];
-  updateColorUI();updateEmojiUI();updateDayUI();
-  document.getElementById('daySelectGroup').style.display=currentView==='weekly'?'block':'none';
+function pauseAll() {
+  tasks.forEach(t => {
+    t.running = false;
+    clearInterval(timerIntervals[t.id]);
+  });
+  render();
+  save();
+}
+
+function resetAll() {
+  tasks.forEach(t => {
+    t.running = false;
+    t.remaining = t.totalSeconds;
+    clearInterval(timerIntervals[t.id]);
+  });
+  render();
+  save();
+}
+
+// ===== DRAG & DROP REORDER =====
+let dragId = null;
+function dragStart(e, id) { dragId = id; e.dataTransfer.effectAllowed = 'move'; }
+function dragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function drop(e, targetId) {
+  e.preventDefault();
+  if (!dragId || dragId === targetId) return;
+  const fromIdx = tasks.findIndex(t => t.id === dragId);
+  const toIdx = tasks.findIndex(t => t.id === targetId);
+  if (fromIdx < 0 || toIdx < 0) return;
+  const [moved] = tasks.splice(fromIdx, 1);
+  tasks.splice(toIdx, 0, moved);
+  dragId = null;
+  render();
+  save();
+}
+
+// ===== MODAL =====
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Task';
+  document.getElementById('modalSaveBtn').textContent = 'Add Task';
+  document.getElementById('modalDeleteBtn').style.display = 'none';
+  document.getElementById('taskName').value = '';
+  document.getElementById('taskMinutes').value = 5;
+  document.getElementById('taskSeconds').value = 0;
+  document.getElementById('taskSound').value = 'chime';
+  selectedColor = '#e94560';
+  selectedEmoji = '⏰';
+  selectedDays = [0,1,2,3,4,5,6];
+  updateColorUI();
+  updateEmojiUI();
+  updateDayUI();
+  document.getElementById('daySelectGroup').style.display = currentView === 'weekly' ? 'block' : 'none';
   document.getElementById('taskModal').classList.add('open');
   document.getElementById('taskName').focus();
 }
-function editTask(id){
-  if(settings.locked)return;
-  const t=tasks.find(t=>t.id===id);if(!t)return;editingId=id;
-  document.getElementById('modalTitle').textContent='Edit Task';
-  document.getElementById('modalSaveBtn').textContent='Save';
-  document.getElementById('modalDeleteBtn').style.display='inline-block';
-  document.getElementById('taskName').value=t.name;
-  document.getElementById('taskMinutes').value=Math.floor(t.totalSeconds/60);
-  document.getElementById('taskSeconds').value=t.totalSeconds%60;
-  document.getElementById('taskSound').value=t.sound||'chime';
-  selectedColor=t.color;selectedEmoji=t.emoji;selectedDays=t.days?[...t.days]:[0,1,2,3,4,5,6];
-  rewardPhotoData=t.rewardPhoto||null;taskPhotoData=t.taskPhoto||null;
-  const pp=document.getElementById('photoPreview'),tp=document.getElementById('taskPhotoPreview');
-  if(rewardPhotoData){pp.src=rewardPhotoData;pp.style.display='block';}else{pp.style.display='none';}
-  if(taskPhotoData){tp.src=taskPhotoData;tp.style.display='block';}else{tp.style.display='none';}
-  updateColorUI();updateEmojiUI();updateDayUI();
-  document.getElementById('daySelectGroup').style.display=currentView==='weekly'?'block':'none';
+
+function editTask(id) {
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'Edit Task';
+  document.getElementById('modalSaveBtn').textContent = 'Save';
+  document.getElementById('modalDeleteBtn').style.display = 'inline-block';
+  document.getElementById('taskName').value = task.name;
+  document.getElementById('taskMinutes').value = Math.floor(task.totalSeconds / 60);
+  document.getElementById('taskSeconds').value = task.totalSeconds % 60;
+  document.getElementById('taskSound').value = task.sound || 'chime';
+  selectedColor = task.color;
+  selectedEmoji = task.emoji;
+  selectedDays = task.days ? [...task.days] : [0,1,2,3,4,5,6];
+  updateColorUI();
+  updateEmojiUI();
+  updateDayUI();
+  document.getElementById('daySelectGroup').style.display = currentView === 'weekly' ? 'block' : 'none';
   document.getElementById('taskModal').classList.add('open');
 }
-function closeModal(){document.getElementById('taskModal').classList.remove('open');editingId=null;}
-function saveTask(){
-  const name=document.getElementById('taskName').value.trim()||'Task';
-  const mins=parseInt(document.getElementById('taskMinutes').value)||0;
-  const secs=parseInt(document.getElementById('taskSeconds').value)||0;
-  const totalSeconds=mins*60+secs;const sound=document.getElementById('taskSound').value;
-  if(totalSeconds<=0){alert('Please set a time!');return;}
-  if(editingId){const t=tasks.find(t=>t.id===editingId);if(t){if(t.running)pauseTask(t.id);t.name=name;t.totalSeconds=totalSeconds;t.remaining=totalSeconds;t.color=selectedColor;t.emoji=selectedEmoji;t.sound=sound;t.days=[...selectedDays];if(rewardPhotoData)t.rewardPhoto=rewardPhotoData;if(taskPhotoData)t.taskPhoto=taskPhotoData;}}
-  else{tasks.push({id:genId(),name,totalSeconds,remaining:totalSeconds,color:selectedColor,emoji:selectedEmoji,sound,running:false,days:[...selectedDays],rewardPhoto:rewardPhotoData,taskPhoto:taskPhotoData});}
-  closeModal();render();save();
+
+function closeModal() {
+  document.getElementById('taskModal').classList.remove('open');
+  editingId = null;
 }
-function deleteTask(){if(!editingId)return;clearInterval(timerIntervals[editingId]);tasks=tasks.filter(t=>t.id!==editingId);closeModal();render();save();}
-function deleteTaskDirect(id){clearInterval(timerIntervals[id]);tasks=tasks.filter(t=>t.id!==id);render();save();}
+
+function saveTask() {
+  const name = document.getElementById('taskName').value.trim() || 'Task';
+  const mins = parseInt(document.getElementById('taskMinutes').value) || 0;
+  const secs = parseInt(document.getElementById('taskSeconds').value) || 0;
+  const totalSeconds = mins * 60 + secs;
+  const sound = document.getElementById('taskSound').value;
+
+  if (totalSeconds <= 0) { alert('Please set a time!'); return; }
+
+  if (editingId) {
+    const task = tasks.find(t => t.id === editingId);
+    if (task) {
+      const wasRunning = task.running;
+      if (wasRunning) pauseTask(task.id);
+      task.name = name;
+      task.totalSeconds = totalSeconds;
+      task.remaining = totalSeconds;
+      task.color = selectedColor;
+      task.emoji = selectedEmoji;
+      task.sound = sound;
+      task.days = [...selectedDays];
+    }
+  } else {
+    tasks.push({
+      id: genId(),
+      name,
+      totalSeconds,
+      remaining: totalSeconds,
+      color: selectedColor,
+      emoji: selectedEmoji,
+      sound,
+      running: false,
+      days: [...selectedDays],
+    });
+  }
+
+  closeModal();
+  render();
+  save();
+}
+
+function deleteTask() {
+  if (!editingId) return;
+  clearInterval(timerIntervals[editingId]);
+  tasks = tasks.filter(t => t.id !== editingId);
+  closeModal();
+  render();
+  save();
+}
 
 // ===== UI HELPERS =====
-function pickColor(el){selectedColor=el.dataset.color;updateColorUI();}
-function updateColorUI(){document.querySelectorAll('#colorPicker .color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.color===selectedColor));}
-function pickEmoji(el){selectedEmoji=el.dataset.emoji;updateEmojiUI();}
-function updateEmojiUI(){document.querySelectorAll('#emojiPicker .color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.emoji===selectedEmoji));}
-function toggleDay(b){const d=parseInt(b.dataset.day),i=selectedDays.indexOf(d);if(i>=0)selectedDays.splice(i,1);else selectedDays.push(d);updateDayUI();}
-function selectAllDays(){selectedDays=[0,1,2,3,4,5,6];updateDayUI();}
-function updateDayUI(){document.querySelectorAll('.day-check').forEach(b=>{b.style.opacity=selectedDays.includes(parseInt(b.dataset.day))?'1':'0.35';});}
-
-// ===== VIEWS =====
-function switchView(v){currentView=v;document.querySelectorAll('.view-tab').forEach(t=>t.classList.toggle('active',t.dataset.view===v));document.getElementById('weekBar').style.display=v==='weekly'?'flex':'none';if(v==='weekly')renderWeekBar();render();save();}
-function switchLayout(l){currentLayout=l;const g=document.getElementById('taskGrid');g.classList.remove('layout-grid','layout-vertical','layout-horizontal');g.classList.add('layout-'+l);document.querySelectorAll('.layout-btn').forEach(b=>b.classList.toggle('active',b.dataset.layout===l));save();}
-function renderWeekBar(){const bar=document.getElementById('weekBar'),today=new Date().getDay();bar.innerHTML=DAYS_SHORT.map((d,i)=>`<button class="day-btn ${i===currentDay?'active':''} ${i===today?'today':''}" onclick="switchDay(${i})">${d}</button>`).join('');}
-function switchDay(d){currentDay=d;renderWeekBar();render();}
-
-// ===== SETTINGS =====
-function openSettings(){document.getElementById('settingsPanel').classList.add('open');}
-function closeSettings(){document.getElementById('settingsPanel').classList.remove('open');}
-function saveSettings(){
-  settings.transitionWarn=parseInt(document.getElementById('transitionWarnSec').value)||10;
-  settings.pin=document.getElementById('pinInput').value;
-  settings.rewardGoal=parseInt(document.getElementById('rewardGoal').value)||10;
-  settings.rewardMsg=document.getElementById('rewardMessage').value;
-  renderRewardBar();save();
+function pickColor(el) {
+  selectedColor = el.dataset.color;
+  updateColorUI();
 }
-function setTheme(t){
-  const root=document.documentElement;
-  root.classList.remove('theme-ocean','theme-jungle','theme-space','theme-candy');
-  if(t!=='default')root.classList.add('theme-'+t);
-  settings.theme=t;
-  document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('active',c.dataset.theme===t));
+function updateColorUI() {
+  document.querySelectorAll('#colorPicker .color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.dataset.color === selectedColor);
+  });
+}
+function pickEmoji(el) {
+  selectedEmoji = el.dataset.emoji;
+  updateEmojiUI();
+}
+function updateEmojiUI() {
+  document.querySelectorAll('#emojiPicker .color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.dataset.emoji === selectedEmoji);
+  });
+}
+function toggleDay(btn) {
+  const day = parseInt(btn.dataset.day);
+  const idx = selectedDays.indexOf(day);
+  if (idx >= 0) selectedDays.splice(idx, 1);
+  else selectedDays.push(day);
+  updateDayUI();
+}
+function selectAllDays() {
+  selectedDays = [0,1,2,3,4,5,6];
+  updateDayUI();
+}
+function updateDayUI() {
+  document.querySelectorAll('.day-check').forEach(btn => {
+    const day = parseInt(btn.dataset.day);
+    btn.style.opacity = selectedDays.includes(day) ? '1' : '0.35';
+  });
+}
+
+// ===== VIEW SWITCHING =====
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+  document.getElementById('weekBar').style.display = view === 'weekly' ? 'flex' : 'none';
+  if (view === 'weekly') renderWeekBar();
+  render();
   save();
 }
-function toggleTheme(){
-  const root=document.documentElement,isLight=root.classList.contains('light');
-  if(isLight){root.classList.remove('light');document.getElementById('themeToggle').textContent='🌙';settings.light=false;}
-  else{root.classList.add('light');document.getElementById('themeToggle').textContent='☀️';settings.light=true;}
+
+function switchLayout(layout) {
+  currentLayout = layout;
+  const grid = document.getElementById('taskGrid');
+  grid.classList.remove('layout-grid', 'layout-vertical', 'layout-horizontal');
+  grid.classList.add('layout-' + layout);
+  document.querySelectorAll('.layout-btn').forEach(b => b.classList.toggle('active', b.dataset.layout === layout));
   save();
 }
-function toggleDyslexic(on){
-  document.documentElement.classList.toggle('dyslexic',on);settings.dyslexic=on;save();
+
+function renderWeekBar() {
+  const bar = document.getElementById('weekBar');
+  const today = new Date().getDay();
+  bar.innerHTML = DAYS_SHORT.map((d, i) => `
+    <button class="day-btn ${i === currentDay ? 'active' : ''} ${i === today ? 'today' : ''}"
+            onclick="switchDay(${i})">${d}</button>
+  `).join('');
 }
 
-// ===== KID LOCK =====
-function toggleLock(){
-  if(settings.locked){showPinPad();}
-  else{if(!settings.pin){alert('Set a PIN in Settings first!');return;}settings.locked=true;document.getElementById('lockBtn').textContent='🔒';render();save();updateLockUI();}
-}
-function showPinPad(){
-  let entered='';const overlay=document.getElementById('lockOverlay');overlay.classList.add('open');
-  const dots=document.getElementById('pinDots');dots.innerHTML='<div class="pin-dot"></div>'.repeat(4);
-  const pad=document.getElementById('pinPad');
-  pad.innerHTML=[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>k===''?'<div></div>':`<button class="pin-key" data-key="${k}" onclick="pinPress('${k}')">${k}</button>`).join('');
-  document.getElementById('pinError').style.opacity='0';
-  window._pinEntered='';
-}
-function pinPress(k){
-  const err=document.getElementById('pinError');err.style.opacity='0';
-  if(k==='⌫'){window._pinEntered=window._pinEntered.slice(0,-1);}
-  else if(window._pinEntered.length<4){window._pinEntered+=k;}
-  const dots=document.querySelectorAll('.pin-dot');dots.forEach((d,i)=>d.classList.toggle('filled',i<window._pinEntered.length));
-  if(window._pinEntered.length===4){
-    if(window._pinEntered===settings.pin){settings.locked=false;document.getElementById('lockOverlay').classList.remove('open');document.getElementById('lockBtn').textContent='🔓';render();save();updateLockUI();}
-    else{err.style.opacity='1';window._pinEntered='';setTimeout(()=>dots.forEach(d=>d.classList.remove('filled')),300);}
-  }
-}
-function updateLockUI(){
-  const locked=settings.locked;
-  document.querySelectorAll('.btn-primary').forEach(b=>{if(b.textContent.includes('Add'))b.style.display=locked?'none':'';});
-  const gc=document.getElementById('globalControls');if(locked){gc.style.display='none';}else{gc.style.display='';}
+function switchDay(day) {
+  currentDay = day;
+  renderWeekBar();
+  render();
 }
 
-// ===== PERSISTENCE =====
-function save(){
-  const profileTasks={};profileTasks[activeProfileId]=tasks;
-  const allTasks=JSON.parse(localStorage.getItem('tb_allTasks')||'{}');
-  Object.assign(allTasks,profileTasks);
-  localStorage.setItem('tb_allTasks',JSON.stringify(allTasks));
-  localStorage.setItem('tb_profiles',JSON.stringify(profiles));
-  localStorage.setItem('tb_activeProfile',activeProfileId);
-  localStorage.setItem('tb_settings',JSON.stringify(settings));
-  localStorage.setItem('tb_view',JSON.stringify({currentView,currentLayout,currentDay}));
-  const ind=document.getElementById('saveIndicator');ind.classList.add('show');setTimeout(()=>ind.classList.remove('show'),1200);
+// ===== PERSISTENCE (localStorage) =====
+function save() {
+  const data = { tasks, currentView, currentLayout, currentDay };
+  localStorage.setItem('visualTaskTimer', JSON.stringify(data));
+  const ind = document.getElementById('saveIndicator');
+  ind.classList.add('show');
+  setTimeout(() => ind.classList.remove('show'), 1500);
 }
-function loadProfileTasks(){
-  const allTasks=JSON.parse(localStorage.getItem('tb_allTasks')||'{}');
-  tasks=(allTasks[activeProfileId]||[]).map(t=>({...t,running:false}));
-}
-function load(){
-  try{
-    profiles=JSON.parse(localStorage.getItem('tb_profiles')||'null')||[{id:'default',name:'Default',emoji:'🧒',stars:0,streak:0,lastCompleteDate:null}];
-    activeProfileId=localStorage.getItem('tb_activeProfile')||'default';
-    settings=Object.assign(settings,JSON.parse(localStorage.getItem('tb_settings')||'{}'));
-    const v=JSON.parse(localStorage.getItem('tb_view')||'{}');
-    if(v.currentView)currentView=v.currentView;if(v.currentLayout)currentLayout=v.currentLayout;if(v.currentDay!==undefined)currentDay=v.currentDay;
-    loadProfileTasks();
-  }catch(e){console.warn('Load failed:',e);}
+
+function load() {
+  try {
+    const raw = localStorage.getItem('visualTaskTimer');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    tasks = data.tasks || [];
+    // Ensure all tasks are stopped on load
+    tasks.forEach(t => { t.running = false; });
+    if (data.currentView) switchView(data.currentView);
+    if (data.currentLayout) switchLayout(data.currentLayout);
+    if (data.currentDay !== undefined) currentDay = data.currentDay;
+  } catch(e) { console.warn('Load failed:', e); }
 }
 
 // ===== EXPORT/IMPORT =====
-function exportSchedule(){const blob=new Blob([JSON.stringify({tasks,profiles,settings,version:2},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='taskbuddy-schedule.json';a.click();}
-function importSchedule(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.tasks){tasks=d.tasks.map(t=>({...t,running:false,remaining:t.totalSeconds}));render();save();}}catch(err){alert('Invalid file!');}};reader.readAsText(file);event.target.value='';}
+function exportSchedule() {
+  const blob = new Blob([JSON.stringify({ tasks, version: 1 }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'visual-timer-schedule.json';
+  a.click();
+}
 
-// ===== KEYBOARD =====
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeModal();closeSettings();closeProfileModal();}
-  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
-  if(e.key==='n'&&!document.querySelector('.modal-overlay.open'))openAddModal();
-  if(e.key===' '){e.preventDefault();const r=tasks.find(t=>t.running);if(r)pauseAll();else startAll();}
+function importSchedule(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.tasks) {
+        tasks = data.tasks.map(t => ({ ...t, running: false, remaining: t.totalSeconds }));
+        render();
+        save();
+      }
+    } catch(err) { alert('Invalid file!'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'n' && !document.querySelector('.modal-overlay.open') && e.target.tagName !== 'INPUT') openAddModal();
+  if (e.key === ' ' && !document.querySelector('.modal-overlay.open') && e.target.tagName !== 'INPUT') {
+    e.preventDefault();
+    const running = tasks.find(t => t.running);
+    if (running) pauseAll();
+    else startAll();
+  }
 });
 
-// ===== APPLY SETTINGS =====
-function applySettings(){
-  if(settings.light)document.documentElement.classList.add('light');
-  if(settings.theme&&settings.theme!=='default')document.documentElement.classList.add('theme-'+settings.theme);
-  if(settings.dyslexic)document.documentElement.classList.add('dyslexic');
-  document.getElementById('themeToggle').textContent=settings.light?'☀️':'🌙';
-  document.getElementById('dyslexicToggle').checked=settings.dyslexic;
-  document.getElementById('transitionWarnSec').value=settings.transitionWarn||10;
-  document.getElementById('pinInput').value=settings.pin||'';
-  document.getElementById('rewardGoal').value=settings.rewardGoal||10;
-  document.getElementById('rewardMessage').value=settings.rewardMsg||'';
-  document.getElementById('lockBtn').textContent=settings.locked?'🔒':'🔓';
-  document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('active',c.dataset.theme===settings.theme));
+// ===== THEME TOGGLE =====
+function toggleTheme() {
+  const root = document.documentElement;
+  const isCurrentlyLight = root.classList.contains('light');
+  if (isCurrentlyLight) {
+    root.classList.remove('light');
+    document.getElementById('themeToggle').textContent = '🌙';
+    localStorage.setItem('visualTimerTheme', 'dark');
+  } else {
+    root.classList.add('light');
+    document.getElementById('themeToggle').textContent = '☀️';
+    localStorage.setItem('visualTimerTheme', 'light');
+  }
+}
+function loadTheme() {
+  const saved = localStorage.getItem('visualTimerTheme');
+  if (saved === 'light') {
+    document.documentElement.classList.add('light');
+    document.getElementById('themeToggle').textContent = '☀️';
+  }
 }
 
 // ===== INIT =====
+loadTheme();
 load();
-applySettings();
-renderProfiles();
-renderRewardBar();
-switchView(currentView);
-switchLayout(currentLayout);
 render();
-if(settings.locked)updateLockUI();
-if(currentView==='weekly')renderWeekBar();
+if (currentView === 'weekly') renderWeekBar();
 </script>
 </body>
 </html>
