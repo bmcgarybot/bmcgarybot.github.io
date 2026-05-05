@@ -736,13 +736,13 @@ function render(){
     const isWarning=task.running&&task.remaining<=settings.transitionWarn&&task.remaining>0;
     const isDone=task.remaining<=0&&task.totalSeconds>0;
     const cls=['task-card',task.running?'active':'',isDone?'completed':'',isWarning?'warning':''].filter(Boolean).join(' ');
-    const photoReveal=task.rewardPhoto?`<div class="task-photo-reveal" style="background-image:url(${task.rewardPhoto})"><div class="task-photo-mask" style="clip-path:inset(${100-pct}% 0 0 0);background:var(--surface)"></div></div>`:'';
+    const photoReveal=task.rewardPhoto?`<div class="task-photo-reveal" style="background-image:url(${task.rewardPhoto})"><div class="task-photo-mask" style="clip-path:inset(0 0 ${pct}% 0);background:var(--surface)"></div></div>`:'';
     const taskImg=task.taskPhoto?`<img src="${task.taskPhoto}" class="task-photo-icon">`:`<span class="task-emoji">${task.emoji}</span>`;
     return`<div class="${cls}" id="card-${task.id}" draggable="true" ondragstart="dragStart(event,'${task.id}')" ondragover="dragOver(event)" ondrop="drop(event,'${task.id}')">
       ${photoReveal}
       <div class="task-fill" style="background:${task.color};height:${pct}%"></div>
       <div class="task-content">
-        <div class="task-header">${taskImg}<span class="task-title">${task.name}</span><span class="task-order">#${index+1}</span></div>
+        <div class="task-header">${taskImg}<span class="task-title">${task.name}</span>${settings.locked?'':`<button class="btn-small" onclick="event.stopPropagation();deleteTaskDirect('${task.id}')" style="background:#c0392b;color:#fff;padding:4px 8px;font-size:0.75rem;min-height:auto;">✕</button>`}<span class="task-order">#${index+1}</span></div>
         <div class="task-time-display" style="color:${isDone?'var(--success)':task.running?'#fff':'var(--text-dim)'}">${isDone?'✓ Done!':formatTime(task.remaining)}</div>
         <div class="task-progress-bar"><div class="task-progress-fill" style="width:${pct}%;background:${task.color}"></div></div>
         <div class="task-controls">
@@ -842,6 +842,7 @@ function saveTask(){
   closeModal();render();save();
 }
 function deleteTask(){if(!editingId)return;clearInterval(timerIntervals[editingId]);tasks=tasks.filter(t=>t.id!==editingId);closeModal();render();save();}
+function deleteTaskDirect(id){clearInterval(timerIntervals[id]);tasks=tasks.filter(t=>t.id!==id);render();save();}
 
 // ===== UI HELPERS =====
 function pickColor(el){selectedColor=el.dataset.color;updateColorUI();}
