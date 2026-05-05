@@ -347,7 +347,7 @@
     transition: border-color 0.2s, transform 0.15s;
   }
   .color-swatch:hover { transform: scale(1.1); }
-  .color-swatch.selected { border-color: #fff; }
+  .color-swatch.selected { border-color: #fff; background: var(--accent) !important; transform: scale(1.15); box-shadow: 0 0 12px rgba(233,69,96,0.5); }
 
   .modal-actions {
     display: flex;
@@ -576,6 +576,7 @@
   <button class="btn-info" onclick="resetAll()">↺ Reset All</button>
   <button class="btn-icon" onclick="exportSchedule()" title="Save Schedule">💾</button>
   <button class="btn-icon" onclick="document.getElementById('importInput').click()" title="Load Schedule">📂</button>
+  <a href="https://docs.google.com/forms/d/e/1FAIpQLSeLulGOabUbCi2-RnY0KHVNacVGKrzoBRjUzmFXJFApOjEq-Q/viewform" target="_blank" style="text-decoration:none"><button class="btn-warning" style="background:linear-gradient(135deg,var(--warning),var(--accent));color:#fff;font-size:0.95rem;padding:10px 18px;">💬 Send Feedback</button></a>
   <input type="file" id="importInput" accept=".json" style="display:none" onchange="importSchedule(event)">
 </div>
 
