@@ -1,0 +1,625 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>My Buddy — AAC Communication</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f0f4f8;--card:#fff;--text:#2d3748;--accent:#4ecdc4;--accent2:#ff6b6b;--strip:#2d3748;--radius:16px;--shadow:0 2px 12px rgba(0,0,0,.08)}
+body{font-family:'Avenir Next','Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column}
+.dark{--bg:#1a202c;--card:#2d3748;--text:#e2e8f0;--strip:#171923;--shadow:0 2px 12px rgba(0,0,0,.3)}
+.hc{--bg:#000;--card:#222;--text:#fff;--strip:#000;--accent:#00ff88;--shadow:0 2px 12px rgba(0,255,136,.2)}
+
+/* SENTENCE STRIP */
+#strip{background:var(--strip);min-height:72px;display:flex;align-items:center;gap:4px;padding:6px;flex-shrink:0}
+#strip-words{display:flex;gap:4px;flex:1;overflow-x:auto;align-items:center;min-height:56px;scrollbar-width:none}
+#strip-words::-webkit-scrollbar{display:none}
+.strip-item{background:rgba(255,255,255,.12);border-radius:10px;padding:4px 8px;display:flex;flex-direction:column;align-items:center;min-width:56px;flex-shrink:0;cursor:pointer;transition:transform .1s}
+.strip-item:active{transform:scale(.9)}
+.strip-item .si-img{font-size:28px;line-height:1.1}
+.strip-item .si-img img{width:32px;height:32px;object-fit:contain;border-radius:4px}
+.strip-item .si-lbl{font-size:9px;color:rgba(255,255,255,.7);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.strip-btn{width:52px;height:52px;border:none;border-radius:12px;font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:transform .1s}
+.strip-btn:active{transform:scale(.9)}
+#btn-speak{background:#4ecdc4;color:#fff}
+#btn-back{background:rgba(255,255,255,.15);color:#fff}
+#btn-clear{background:rgba(255,100,100,.3);color:#fff}
+
+/* MAIN */
+#main{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px;-webkit-overflow-scrolling:touch}
+
+/* CATEGORY GRID */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:4px}
+.cat-card{border-radius:var(--radius);padding:16px 8px;text-align:center;cursor:pointer;transition:transform .15s;color:#fff;box-shadow:var(--shadow);min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.cat-card:active{transform:scale(.95)}
+.cat-card .cc-emoji{font-size:clamp(36px,8vw,52px)}
+.cat-card .cc-label{font-size:clamp(13px,3vw,16px);font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+
+/* SYMBOL GRID */
+.sym-header{display:flex;align-items:center;gap:8px;padding:4px 8px 8px;position:sticky;top:0;background:var(--bg);z-index:5}
+.sym-back{width:40px;height:40px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-size:20px;cursor:pointer;flex-shrink:0}
+.sym-title{font-size:clamp(16px,4vw,22px);font-weight:800;flex:1}
+.sym-grid{display:grid;gap:8px;padding:0 4px 80px}
+.grid-2{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}.grid-5{grid-template-columns:repeat(5,1fr)}
+.grid-6{grid-template-columns:repeat(6,1fr)}
+.sym-cell{background:var(--card);border-radius:var(--radius);padding:8px 4px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:transform .1s,border-color .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:80px;position:relative;border:3px solid transparent}
+.sym-cell:active{transform:scale(.93)}
+.sym-cell.speaking{border-color:var(--accent);background:rgba(78,205,196,.15)}
+.sym-cell .sc-img{font-size:clamp(32px,8vw,48px);line-height:1.1}
+.sym-cell .sc-img img{width:clamp(40px,10vw,60px);height:clamp(40px,10vw,60px);object-fit:contain;border-radius:8px}
+.sym-cell .sc-lbl{font-size:clamp(11px,2.5vw,14px);font-weight:700;word-break:break-word;line-height:1.2}
+.sym-cell .sc-fav{position:absolute;top:2px;right:4px;font-size:12px;opacity:.5}
+.sym-cell .sc-edit-btn{display:none;position:absolute;top:2px;left:4px;font-size:14px;cursor:pointer;background:none;border:none;padding:2px}
+.edit-active .sc-edit-btn{display:block}
+.edit-active #main{border:3px solid #f6ad55}
+
+/* SETTINGS */
+.settings{padding:8px 4px}
+.set-group{margin-bottom:16px}
+.set-group h4{font-size:.9em;color:var(--accent);margin-bottom:6px}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border-radius:12px;margin-bottom:6px;box-shadow:var(--shadow)}
+.set-row label{font-weight:600;font-size:.9em}
+.set-row select,.set-row input[type=range]{max-width:160px}
+.set-btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;transition:transform .1s}
+.set-btn:active{transform:scale(.97)}
+.set-btn.primary{background:var(--accent);color:#fff}
+.set-btn.danger{background:#ff6b6b;color:#fff}
+.set-btn.secondary{background:rgba(0,0,0,.08);color:var(--text)}
+
+/* NAV BAR */
+#nav{display:flex;background:var(--card);border-top:1px solid rgba(0,0,0,.08);padding:4px 8px;gap:4px;flex-shrink:0}
+.nav-btn{flex:1;border:none;background:transparent;padding:6px 2px;border-radius:10px;font-size:10px;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.6;transition:all .15s;font-family:inherit}
+.nav-btn.active{opacity:1;background:rgba(78,205,196,.12);color:var(--accent)}
+.nav-btn .nb-icon{font-size:20px}
+
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--card);border-radius:20px;padding:24px;max-width:380px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.modal h3{font-size:1.2em;margin-bottom:12px}
+.modal label{display:block;font-size:.85em;font-weight:600;margin:10px 0 4px}
+.modal input,.modal select{width:100%;padding:10px 12px;border:2px solid rgba(0,0,0,.1);border-radius:10px;font-size:1em;font-family:inherit;background:var(--bg);color:var(--text)}
+.modal-btns{display:flex;gap:8px;margin-top:16px}
+.modal-btns button{flex:1;padding:12px;border:none;border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;font-family:inherit}
+.m-ok{background:var(--accent);color:#fff}
+.m-cancel{background:rgba(0,0,0,.08);color:var(--text)}
+.m-danger{background:var(--accent2);color:#fff}
+
+/* PIN PAD */
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:240px;margin:12px auto}
+.pin-btn{padding:16px;border:none;border-radius:12px;font-size:1.4em;font-weight:700;cursor:pointer;background:var(--bg);color:var(--text);transition:transform .1s;font-family:inherit}
+.pin-btn:active{transform:scale(.9);background:var(--accent);color:#fff}
+.pin-display{text-align:center;font-size:2em;letter-spacing:12px;margin:8px 0;min-height:40px}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:linear-gradient(135deg,#4ecdc4,#44a08d);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s}
+#splash.gone{opacity:0;pointer-events:none}
+.sp-wave{font-size:80px;animation:wave 1s ease-in-out}.sp-name{font-size:clamp(32px,8vw,56px);font-weight:900;color:#fff;margin-top:8px}
+.sp-sub{font-size:clamp(14px,3vw,18px);color:rgba(255,255,255,.8);margin-top:4px}
+@keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(20deg)}75%{transform:rotate(-10deg)}}
+
+@media(max-width:400px){.cat-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:768px){.cat-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:1024px){.cat-grid{grid-template-columns:repeat(5,1fr)}}
+</style></head><body>
+
+<div id="splash"><div class="sp-wave">👋</div><div class="sp-name">My Buddy</div><div class="sp-sub">Your Communication Friend</div></div>
+
+<div id="strip">
+<button class="strip-btn" id="btn-back" onclick="stripBack()">⌫</button>
+<div id="strip-words"></div>
+<button class="strip-btn" id="btn-clear" onclick="stripClear()">🗑️</button>
+<button class="strip-btn" id="btn-speak" onclick="speakStrip()">▶️</button>
+</div>
+
+<div id="main"></div>
+
+<div id="nav">
+<button class="nav-btn active" onclick="goHome()" id="nav-home"><span class="nb-icon">🏠</span>Home</button>
+<button class="nav-btn" onclick="goRecents()" id="nav-recent"><span class="nb-icon">🕐</span>Recent</button>
+<button class="nav-btn" onclick="goFavorites()" id="nav-fav"><span class="nb-icon">⭐</span>Favorites</button>
+<button class="nav-btn" onclick="goSettings()" id="nav-set"><span class="nb-icon">⚙️</span>Settings</button>
+</div>
+
+<!-- PIN MODAL -->
+<div class="modal-bg" id="pin-modal"><div class="modal">
+<h3>🔒 Parent Access</h3>
+<p style="font-size:.85em;color:gray;margin-bottom:8px">Enter PIN to unlock edit mode</p>
+<div class="pin-display" id="pin-dots"></div>
+<div class="pin-grid" id="pin-grid"></div>
+<p id="pin-err" style="color:#ff6b6b;text-align:center;font-size:.85em;min-height:1.2em"></p>
+<div class="modal-btns"><button class="m-cancel" onclick="closeModal('pin-modal');pinBuf=''">Cancel</button></div>
+</div></div>
+
+<!-- EDIT SYMBOL MODAL -->
+<div class="modal-bg" id="edit-modal"><div class="modal">
+<h3 id="edit-title">Edit Symbol</h3>
+<label>Word / Label</label>
+<input id="edit-word" placeholder="e.g. water, happy, mom">
+<label>Emoji (leave blank if using photo)</label>
+<input id="edit-emoji" placeholder="Paste emoji like 🍎">
+<label>Photo from device</label>
+<input type="file" id="edit-image" accept="image/*" onchange="previewImg(this)">
+<div id="edit-preview" style="margin-top:8px;text-align:center"></div>
+<label>Category</label>
+<select id="edit-cat"></select>
+<div class="modal-btns">
+<button class="m-cancel" onclick="closeModal('edit-modal')">Cancel</button>
+<button class="m-danger" id="edit-del-btn" onclick="deleteSymbol()">Delete</button>
+<button class="m-ok" onclick="saveSymbol()">Save</button>
+</div>
+</div></div>
+
+<!-- CHANGE PIN MODAL -->
+<div class="modal-bg" id="chpin-modal"><div class="modal">
+<h3>🔑 Change PIN</h3>
+<label>New PIN (4 digits)</label>
+<input id="new-pin" type="tel" maxlength="4" pattern="[0-9]*" placeholder="1234">
+<div class="modal-btns">
+<button class="m-cancel" onclick="closeModal('chpin-modal')">Cancel</button>
+<button class="m-ok" onclick="changePin()">Save PIN</button>
+</div>
+</div></div>
+
+<script>
+/* =====================================================================
+   MY BUDDY AAC — Complete Communication App v1.0
+   Built by Obsidian Slug for Quantum Neuroshift
+   ===================================================================== */
+
+const CATS=[
+{id:'core',name:'Yes / No',emoji:'💬',color:'#2e86de'},
+{id:'feel',name:'Feelings',emoji:'😊',color:'#ee5a24'},
+{id:'food',name:'Food & Drink',emoji:'🍎',color:'#ff9f43'},
+{id:'act',name:'Actions',emoji:'🏃',color:'#0abde3'},
+{id:'ppl',name:'People',emoji:'👨‍👩‍👧‍👦',color:'#6c5ce7'},
+{id:'ani',name:'Animals',emoji:'🐕',color:'#d4a017'},
+{id:'place',name:'Places',emoji:'🏠',color:'#10ac84'},
+{id:'thing',name:'Things',emoji:'🧸',color:'#5f27cd'},
+{id:'color',name:'Colors',emoji:'🌈',color:'#e84393'},
+{id:'num',name:'Numbers',emoji:'🔢',color:'#01a3a4'},
+{id:'quest',name:'Questions',emoji:'❓',color:'#d63031'},
+{id:'body',name:'Body',emoji:'🫀',color:'#e17055'},
+{id:'time',name:'Time',emoji:'⏰',color:'#636e72'}
+];
+
+const DSYMS=[
+// CORE
+{w:'yes',e:'✅',c:'core'},{w:'no',e:'❌',c:'core'},{w:'please',e:'🙏',c:'core'},{w:'thank you',e:'💛',c:'core'},
+{w:'sorry',e:'😔',c:'core'},{w:'hello',e:'👋',c:'core'},{w:'bye bye',e:'🤚',c:'core'},{w:'more',e:'➕',c:'core'},
+{w:'all done',e:'🏁',c:'core'},{w:'again',e:'🔄',c:'core'},{w:'mine',e:'👈',c:'core'},{w:'wait',e:'⏸️',c:'core'},
+{w:'stop',e:'🛑',c:'core'},{w:'help',e:'🆘',c:'core'},{w:'I want',e:'👉',c:'core'},{w:'I need',e:'🫵',c:'core'},
+{w:'I like',e:'👍',c:'core'},{w:"I don't like",e:'👎',c:'core'},{w:'I feel',e:'💭',c:'core'},{w:'look',e:'👀',c:'core'},
+// FEELINGS
+{w:'happy',e:'😊',c:'feel'},{w:'sad',e:'😢',c:'feel'},{w:'angry',e:'😠',c:'feel'},{w:'scared',e:'😨',c:'feel'},
+{w:'tired',e:'😴',c:'feel'},{w:'excited',e:'🤩',c:'feel'},{w:'sick',e:'🤒',c:'feel'},{w:'hurt',e:'🤕',c:'feel'},
+{w:'bored',e:'😑',c:'feel'},{w:'confused',e:'😕',c:'feel'},{w:'love',e:'🥰',c:'feel'},{w:'proud',e:'😤',c:'feel'},
+{w:'silly',e:'🤪',c:'feel'},{w:'calm',e:'😌',c:'feel'},{w:'nervous',e:'😬',c:'feel'},{w:'frustrated',e:'😩',c:'feel'},
+{w:'surprised',e:'😲',c:'feel'},{w:'shy',e:'🫣',c:'feel'},{w:'worried',e:'😟',c:'feel'},{w:'good',e:'😃',c:'feel'},
+{w:'bad',e:'😞',c:'feel'},{w:'hungry',e:'🤤',c:'feel'},{w:'thirsty',e:'💧',c:'feel'},{w:'cold',e:'🥶',c:'feel'},
+{w:'hot',e:'🥵',c:'feel'},{w:'lonely',e:'😿',c:'feel'},
+// FOOD
+{w:'water',e:'💧',c:'food'},{w:'milk',e:'🥛',c:'food'},{w:'juice',e:'🧃',c:'food'},{w:'apple',e:'🍎',c:'food'},
+{w:'banana',e:'🍌',c:'food'},{w:'cookie',e:'🍪',c:'food'},{w:'bread',e:'🍞',c:'food'},{w:'cheese',e:'🧀',c:'food'},
+{w:'chicken',e:'🍗',c:'food'},{w:'rice',e:'🍚',c:'food'},{w:'pasta',e:'🍝',c:'food'},{w:'pizza',e:'🍕',c:'food'},
+{w:'ice cream',e:'🍦',c:'food'},{w:'cereal',e:'🥣',c:'food'},{w:'yogurt',e:'🫙',c:'food'},{w:'crackers',e:'🍘',c:'food'},
+{w:'sandwich',e:'🥪',c:'food'},{w:'soup',e:'🥣',c:'food'},{w:'eggs',e:'🥚',c:'food'},{w:'fries',e:'🍟',c:'food'},
+{w:'grapes',e:'🍇',c:'food'},{w:'strawberry',e:'🍓',c:'food'},{w:'carrot',e:'🥕',c:'food'},{w:'hot dog',e:'🌭',c:'food'},
+{w:'cake',e:'🎂',c:'food'},{w:'candy',e:'🍬',c:'food'},{w:'popcorn',e:'🍿',c:'food'},{w:'snack',e:'🥨',c:'food'},
+// ACTIONS
+{w:'want',e:'🙋',c:'act'},{w:'go',e:'🚶',c:'act'},{w:'play',e:'🎮',c:'act'},{w:'eat',e:'🍽️',c:'act'},
+{w:'drink',e:'🥤',c:'act'},{w:'sleep',e:'💤',c:'act'},{w:'sit',e:'🪑',c:'act'},{w:'stand up',e:'🧍',c:'act'},
+{w:'walk',e:'🚶',c:'act'},{w:'run',e:'🏃',c:'act'},{w:'read',e:'📖',c:'act'},{w:'watch',e:'📺',c:'act'},
+{w:'listen',e:'👂',c:'act'},{w:'give',e:'🤲',c:'act'},{w:'open',e:'📂',c:'act'},{w:'close',e:'📁',c:'act'},
+{w:'wash hands',e:'🧼',c:'act'},{w:'come here',e:'🫴',c:'act'},{w:'hug',e:'🤗',c:'act'},{w:'sing',e:'🎤',c:'act'},
+{w:'dance',e:'💃',c:'act'},{w:'draw',e:'✏️',c:'act'},{w:'build',e:'🧱',c:'act'},{w:'push',e:'👐',c:'act'},
+{w:'throw',e:'🤾',c:'act'},{w:'get dressed',e:'👕',c:'act'},{w:'brush teeth',e:'🪥',c:'act'},{w:'take bath',e:'🛁',c:'act'},
+{w:'potty',e:'🚽',c:'act'},{w:'share',e:'🤝',c:'act'},{w:'turn on',e:'🔛',c:'act'},{w:'turn off',e:'📴',c:'act'},
+// PEOPLE
+{w:'mom',e:'👩',c:'ppl'},{w:'dad',e:'👨',c:'ppl'},{w:'brother',e:'👦',c:'ppl'},{w:'sister',e:'👧',c:'ppl'},
+{w:'grandma',e:'👵',c:'ppl'},{w:'grandpa',e:'👴',c:'ppl'},{w:'teacher',e:'👩‍🏫',c:'ppl'},{w:'friend',e:'🧑‍🤝‍🧑',c:'ppl'},
+{w:'baby',e:'👶',c:'ppl'},{w:'doctor',e:'👩‍⚕️',c:'ppl'},{w:'me',e:'🙋',c:'ppl'},{w:'you',e:'🫵',c:'ppl'},
+{w:'therapist',e:'💆',c:'ppl'},{w:'helper',e:'🦸',c:'ppl'},{w:'everyone',e:'👥',c:'ppl'},{w:'family',e:'👨‍👩‍👧‍👦',c:'ppl'},
+// ANIMALS
+{w:'dog',e:'🐕',c:'ani'},{w:'cat',e:'🐈',c:'ani'},{w:'fish',e:'🐠',c:'ani'},{w:'bird',e:'🐦',c:'ani'},
+{w:'horse',e:'🐴',c:'ani'},{w:'bunny',e:'🐰',c:'ani'},{w:'bear',e:'🐻',c:'ani'},{w:'dinosaur',e:'🦕',c:'ani'},
+{w:'butterfly',e:'🦋',c:'ani'},{w:'duck',e:'🦆',c:'ani'},{w:'frog',e:'🐸',c:'ani'},{w:'elephant',e:'🐘',c:'ani'},
+{w:'turtle',e:'🐢',c:'ani'},{w:'snake',e:'🐍',c:'ani'},{w:'lion',e:'🦁',c:'ani'},{w:'monkey',e:'🐵',c:'ani'},
+{w:'cow',e:'🐮',c:'ani'},{w:'pig',e:'🐷',c:'ani'},{w:'shark',e:'🦈',c:'ani'},{w:'penguin',e:'🐧',c:'ani'},
+// PLACES
+{w:'home',e:'🏠',c:'place'},{w:'school',e:'🏫',c:'place'},{w:'bathroom',e:'🚻',c:'place'},{w:'kitchen',e:'🍳',c:'place'},
+{w:'bedroom',e:'🛏️',c:'place'},{w:'outside',e:'🌳',c:'place'},{w:'park',e:'🏞️',c:'place'},{w:'store',e:'🏪',c:'place'},
+{w:'car',e:'🚗',c:'place'},{w:'playground',e:'🛝',c:'place'},{w:'hospital',e:'🏥',c:'place'},{w:'library',e:'📚',c:'place'},
+{w:'pool',e:'🏊',c:'place'},{w:'restaurant',e:'🍔',c:'place'},{w:'church',e:'⛪',c:'place'},{w:"grandma's house",e:'🏡',c:'place'},
+// THINGS
+{w:'toy',e:'🧸',c:'thing'},{w:'book',e:'📕',c:'thing'},{w:'ball',e:'⚽',c:'thing'},{w:'phone',e:'📱',c:'thing'},
+{w:'TV',e:'📺',c:'thing'},{w:'tablet',e:'📲',c:'thing'},{w:'blanket',e:'🛏️',c:'thing'},{w:'shoes',e:'👟',c:'thing'},
+{w:'shirt',e:'👕',c:'thing'},{w:'hat',e:'🧢',c:'thing'},{w:'cup',e:'🥤',c:'thing'},{w:'plate',e:'🍽️',c:'thing'},
+{w:'spoon',e:'🥄',c:'thing'},{w:'door',e:'🚪',c:'thing'},{w:'light',e:'💡',c:'thing'},{w:'music',e:'🎵',c:'thing'},
+{w:'puzzle',e:'🧩',c:'thing'},{w:'crayon',e:'🖍️',c:'thing'},{w:'sticker',e:'⭐',c:'thing'},{w:'backpack',e:'🎒',c:'thing'},
+{w:'glasses',e:'👓',c:'thing'},{w:'medicine',e:'💊',c:'thing'},{w:'key',e:'🔑',c:'thing'},{w:'money',e:'💰',c:'thing'},
+// COLORS
+{w:'red',e:'🔴',c:'color'},{w:'blue',e:'🔵',c:'color'},{w:'green',e:'🟢',c:'color'},{w:'yellow',e:'🟡',c:'color'},
+{w:'orange',e:'🟠',c:'color'},{w:'purple',e:'🟣',c:'color'},{w:'pink',e:'💗',c:'color'},{w:'black',e:'⚫',c:'color'},
+{w:'white',e:'⚪',c:'color'},{w:'brown',e:'🟤',c:'color'},{w:'rainbow',e:'🌈',c:'color'},
+// NUMBERS
+{w:'one',e:'1️⃣',c:'num'},{w:'two',e:'2️⃣',c:'num'},{w:'three',e:'3️⃣',c:'num'},{w:'four',e:'4️⃣',c:'num'},
+{w:'five',e:'5️⃣',c:'num'},{w:'six',e:'6️⃣',c:'num'},{w:'seven',e:'7️⃣',c:'num'},{w:'eight',e:'8️⃣',c:'num'},
+{w:'nine',e:'9️⃣',c:'num'},{w:'ten',e:'🔟',c:'num'},
+// QUESTIONS
+{w:'what',e:'❓',c:'quest'},{w:'where',e:'📍',c:'quest'},{w:'who',e:'👤',c:'quest'},{w:'when',e:'🕐',c:'quest'},
+{w:'why',e:'🤔',c:'quest'},{w:'how',e:'💭',c:'quest'},{w:'which one',e:'👆',c:'quest'},{w:'can I',e:'🙋',c:'quest'},
+{w:'how many',e:'🔢',c:'quest'},{w:'what is that',e:'👀',c:'quest'},
+// BODY
+{w:'head',e:'🗣️',c:'body'},{w:'eyes',e:'👀',c:'body'},{w:'ears',e:'👂',c:'body'},{w:'mouth',e:'👄',c:'body'},
+{w:'nose',e:'👃',c:'body'},{w:'hands',e:'🤲',c:'body'},{w:'feet',e:'🦶',c:'body'},{w:'tummy',e:'🫃',c:'body'},
+{w:'teeth',e:'🦷',c:'body'},{w:'hair',e:'💇',c:'body'},{w:'arm',e:'💪',c:'body'},{w:'leg',e:'🦵',c:'body'},
+{w:'heart',e:'❤️',c:'body'},{w:'back',e:'🔙',c:'body'},
+// TIME
+{w:'now',e:'⏰',c:'time'},{w:'later',e:'🔜',c:'time'},{w:'morning',e:'🌅',c:'time'},{w:'night',e:'🌙',c:'time'},
+{w:'today',e:'📅',c:'time'},{w:'tomorrow',e:'📆',c:'time'},{w:'yesterday',e:'⏪',c:'time'},{w:'soon',e:'⏳',c:'time'},
+{w:'before',e:'⬅️',c:'time'},{w:'after',e:'➡️',c:'time'},{w:'always',e:'♾️',c:'time'},{w:'never',e:'🚫',c:'time'}
+];
+
+// ===== STATE =====
+let symbols=[],sentence=[],recents=[],favorites=[];
+let currentCat=null,editMode=false,editingIdx=-1,gridSize=4;
+let pin='1234',voiceUri='',speechRate=0.9,speechPitch=1,theme='light';
+let pendingImg=null; // base64 from file upload
+
+// ===== AUDIO =====
+let AC=null;
+function initAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}
+document.addEventListener('touchstart',initAC,{once:true});
+document.addEventListener('click',initAC,{once:true});
+function tick(){try{initAC();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=600;g.gain.setValueAtTime(.15,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.06);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.06)}catch(e){}}
+function chime(){try{initAC();[523,659,784].forEach((f,i)=>{setTimeout(()=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.15,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+.2);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.2)},i*100)})}catch(e){}}
+
+// ===== SPEECH =====
+function speak(text,cb){
+  if(!text)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=speechRate;u.pitch=speechPitch;
+  if(voiceUri){const v=speechSynthesis.getVoices().find(v=>v.voiceURI===voiceUri);if(v)u.voice=v}
+  if(cb)u.onend=cb;
+  speechSynthesis.speak(u);
+}
+
+// ===== PERSISTENCE (localStorage for simplicity — works offline immediately) =====
+function saveState(){
+  const st={symbols,recents,favorites,gridSize,pin,voiceUri,speechRate,speechPitch,theme};
+  try{localStorage.setItem('mybuddy',JSON.stringify(st))}catch(e){}
+}
+function loadState(){
+  try{
+    const raw=localStorage.getItem('mybuddy');
+    if(!raw){symbols=DSYMS.map((s,i)=>({...s,id:i,img:null,fav:false}));saveState();return}
+    const st=JSON.parse(raw);
+    symbols=st.symbols||[];recents=st.recents||[];favorites=st.favorites||[];
+    gridSize=st.gridSize||4;pin=st.pin||'1234';
+    voiceUri=st.voiceUri||'';speechRate=st.speechRate||0.9;speechPitch=st.speechPitch||1;
+    theme=st.theme||'light';
+  }catch(e){symbols=DSYMS.map((s,i)=>({...s,id:i,img:null,fav:false}));saveState()}
+}
+
+// ===== STRIP =====
+function renderStrip(){
+  const sw=document.getElementById('strip-words');
+  sw.innerHTML='';
+  sentence.forEach((s,i)=>{
+    const d=document.createElement('div');d.className='strip-item';
+    d.innerHTML=`<div class="si-img">${s.img?`<img src="${s.img}">`:(s.e||'📌')}</div><div class="si-lbl">${s.w}</div>`;
+    d.onclick=()=>{speak(s.w);tick()};
+    sw.appendChild(d);
+  });
+  sw.scrollLeft=sw.scrollWidth;
+}
+function addToStrip(sym){
+  sentence.push(sym);renderStrip();speak(sym.w);tick();
+  // Track recents
+  recents=recents.filter(r=>r.w!==sym.w);
+  recents.unshift({w:sym.w,e:sym.e,c:sym.c,img:sym.img});
+  if(recents.length>30)recents=recents.slice(0,30);
+  saveState();
+}
+function stripBack(){if(sentence.length){sentence.pop();renderStrip();tick()}}
+function stripClear(){sentence=[];renderStrip();tick()}
+function speakStrip(){
+  if(!sentence.length)return;
+  const text=sentence.map(s=>s.w).join(' ');
+  speak(text);chime();
+  // Flash strip
+  document.getElementById('strip').style.background='#4ecdc4';
+  setTimeout(()=>document.getElementById('strip').style.background='',400);
+}
+
+// ===== NAVIGATION =====
+function setNav(id){document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+function goHome(){
+  currentCat=null;setNav('nav-home');
+  const m=document.getElementById('main');
+  let h='<div class="cat-grid">';
+  CATS.forEach(cat=>{
+    const count=symbols.filter(s=>s.c===cat.id).length;
+    h+=`<div class="cat-card" style="background:${cat.color}" onclick="openCat('${cat.id}')">
+      <div class="cc-emoji">${cat.emoji}</div>
+      <div class="cc-label">${cat.name}</div>
+    </div>`;
+  });
+  h+='</div>';
+  m.innerHTML=h;m.scrollTop=0;
+}
+
+function openCat(catId){
+  currentCat=catId;
+  const cat=CATS.find(c=>c.id===catId);
+  const syms=symbols.filter(s=>s.c===catId);
+  renderSymGrid(cat?cat.name:'',syms,()=>goHome());
+}
+
+function renderSymGrid(title,syms,backFn){
+  const m=document.getElementById('main');
+  let h=`<div class="sym-header">
+    <button class="sym-back" onclick="(${backFn.toString()})()">←</button>
+    <div class="sym-title">${title}</div>`;
+  if(editMode){h+=`<button class="sym-back" style="background:#ff9f43;font-size:16px" onclick="openAddSymbol()">+ Add</button>`}
+  h+=`</div>`;
+  h+=`<div class="sym-grid grid-${gridSize} ${editMode?'edit-active':''}">`;
+  syms.forEach((s,i)=>{
+    const idx=symbols.indexOf(s);
+    const imgHtml=s.img?`<img src="${s.img}">`:s.e||'📌';
+    h+=`<div class="sym-cell" id="sym-${idx}" onclick="tapSymbol(${idx})">
+      <button class="sc-edit-btn" onclick="event.stopPropagation();openEditSymbol(${idx})">✏️</button>
+      <div class="sc-img">${imgHtml}</div>
+      <div class="sc-lbl">${s.w}</div>
+      ${s.fav?'<div class="sc-fav">⭐</div>':''}
+    </div>`;
+  });
+  h+=`</div>`;
+  m.innerHTML=h;m.scrollTop=0;
+}
+
+function tapSymbol(idx){
+  if(editMode){openEditSymbol(idx);return}
+  const s=symbols[idx];if(!s)return;
+  addToStrip(s);
+  // Visual feedback
+  const el=document.getElementById('sym-'+idx);
+  if(el){el.classList.add('speaking');setTimeout(()=>el.classList.remove('speaking'),400)}
+}
+
+// ===== RECENTS =====
+function goRecents(){
+  setNav('nav-recent');currentCat=null;
+  if(!recents.length){
+    document.getElementById('main').innerHTML='<div style="text-align:center;padding:40px;opacity:.5"><div style="font-size:48px">🕐</div><p>Words you use will appear here</p></div>';
+    return;
+  }
+  // Map recents to symbol-like objects for display
+  const syms=recents.map(r=>{
+    const match=symbols.find(s=>s.w===r.w);
+    return match||{...r,id:-1,fav:false};
+  });
+  renderSymGrid('Recent Words',syms,()=>goHome());
+}
+
+// ===== FAVORITES =====
+function goFavorites(){
+  setNav('nav-fav');currentCat=null;
+  const favs=symbols.filter(s=>s.fav);
+  if(!favs.length){
+    document.getElementById('main').innerHTML='<div style="text-align:center;padding:40px;opacity:.5"><div style="font-size:48px">⭐</div><p>Long-press any word to favorite it</p></div>';
+    return;
+  }
+  renderSymGrid('Favorites',favs,()=>goHome());
+}
+
+// ===== SETTINGS =====
+function goSettings(){
+  setNav('nav-set');currentCat=null;
+  const voices=speechSynthesis.getVoices();
+  let voiceOpts=voices.map(v=>`<option value="${v.voiceURI}" ${v.voiceURI===voiceUri?'selected':''}>${v.name} (${v.lang})</option>`).join('');
+
+  document.getElementById('main').innerHTML=`<div class="settings">
+    <h3 style="margin-bottom:12px">⚙️ Settings</h3>
+
+    <div class="set-group"><h4>Voice</h4>
+      <div class="set-row"><label>Voice</label><select onchange="voiceUri=this.value;saveState()">${voiceOpts}</select></div>
+      <div class="set-row"><label>Speed: ${speechRate.toFixed(1)}</label><input type="range" min="0.3" max="1.5" step="0.1" value="${speechRate}" onchange="speechRate=+this.value;this.parentNode.querySelector('label').textContent='Speed: '+speechRate.toFixed(1);saveState()"></div>
+      <div class="set-row"><label>Pitch: ${speechPitch.toFixed(1)}</label><input type="range" min="0.5" max="2" step="0.1" value="${speechPitch}" onchange="speechPitch=+this.value;this.parentNode.querySelector('label').textContent='Pitch: '+speechPitch.toFixed(1);saveState()"></div>
+      <button class="set-btn secondary" onclick="speak('Hello! I am My Buddy.')">🔊 Test Voice</button>
+    </div>
+
+    <div class="set-group"><h4>Display</h4>
+      <div class="set-row"><label>Grid Size</label>
+        <select onchange="gridSize=+this.value;saveState()">
+          ${[2,3,4,5,6].map(n=>`<option value="${n}" ${gridSize===n?'selected':''}>${n}×${n}</option>`).join('')}
+        </select>
+      </div>
+      <div class="set-row"><label>Theme</label>
+        <select onchange="setTheme(this.value)">
+          <option value="light" ${theme==='light'?'selected':''}>Light</option>
+          <option value="dark" ${theme==='dark'?'selected':''}>Dark</option>
+          <option value="hc" ${theme==='hc'?'selected':''}>High Contrast</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="set-group"><h4>Parent Controls 🔒</h4>
+      <button class="set-btn primary" onclick="promptPin('edit')">${editMode?'🔓 Exit Edit Mode':'🔒 Enter Edit Mode'}</button>
+      <button class="set-btn secondary" onclick="promptPin('chpin')">🔑 Change PIN</button>
+    </div>
+
+    <div class="set-group"><h4>Data</h4>
+      <button class="set-btn secondary" onclick="exportData()">📤 Export Board (JSON)</button>
+      <button class="set-btn secondary" onclick="document.getElementById('import-file').click()">📥 Import Board (JSON)</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+      <button class="set-btn danger" onclick="promptPin('reset')">🗑️ Reset to Defaults</button>
+    </div>
+
+    <p style="text-align:center;font-size:.7em;opacity:.4;margin-top:24px">My Buddy AAC v1.0 — Quantum Neuroshift</p>
+  </div>`;
+}
+
+function setTheme(t){
+  theme=t;document.body.className=t==='light'?'':t;saveState();
+}
+
+// ===== PIN SYSTEM =====
+let pinBuf='',pinAction='';
+function promptPin(action){
+  if(editMode&&action==='edit'){editMode=false;document.body.classList.remove('edit-active');goSettings();return}
+  pinAction=action;pinBuf='';
+  document.getElementById('pin-dots').textContent='';
+  document.getElementById('pin-err').textContent='';
+  // Build pin pad
+  let h='';
+  for(let i=1;i<=9;i++)h+=`<button class="pin-btn" onclick="pinTap('${i}')">${i}</button>`;
+  h+=`<button class="pin-btn" onclick="pinTap('clear')">⌫</button>`;
+  h+=`<button class="pin-btn" onclick="pinTap('0')">0</button>`;
+  h+=`<button class="pin-btn" onclick="pinTap('go')">✓</button>`;
+  document.getElementById('pin-grid').innerHTML=h;
+  openModal('pin-modal');
+}
+function pinTap(k){
+  if(k==='clear'){pinBuf=pinBuf.slice(0,-1)}
+  else if(k==='go'){checkPin();return}
+  else if(pinBuf.length<6){pinBuf+=k}
+  document.getElementById('pin-dots').textContent='●'.repeat(pinBuf.length);
+  if(pinBuf.length===4)setTimeout(checkPin,200);
+}
+function checkPin(){
+  if(pinBuf===pin){
+    closeModal('pin-modal');pinBuf='';
+    if(pinAction==='edit'){editMode=true;document.body.classList.add('edit-active');goHome()}
+    else if(pinAction==='chpin'){openModal('chpin-modal')}
+    else if(pinAction==='reset'){if(confirm('Reset all symbols to defaults? Custom images will be lost.')){localStorage.removeItem('mybuddy');location.reload()}}
+  }else{
+    document.getElementById('pin-err').textContent='Wrong PIN';
+    pinBuf='';document.getElementById('pin-dots').textContent='';
+    if(navigator.vibrate)navigator.vibrate(200);
+  }
+}
+function changePin(){
+  const np=document.getElementById('new-pin').value;
+  if(np.length<4||!/^\d+$/.test(np)){alert('PIN must be at least 4 digits');return}
+  pin=np;saveState();closeModal('chpin-modal');alert('PIN changed!');
+}
+
+// ===== EDIT SYMBOLS =====
+function openEditSymbol(idx){
+  editingIdx=idx;pendingImg=null;
+  const s=symbols[idx];
+  document.getElementById('edit-title').textContent='Edit Symbol';
+  document.getElementById('edit-word').value=s.w;
+  document.getElementById('edit-emoji').value=s.e||'';
+  document.getElementById('edit-image').value='';
+  document.getElementById('edit-preview').innerHTML=s.img?`<img src="${s.img}" style="max-width:80px;border-radius:8px">`:'';
+  document.getElementById('edit-del-btn').style.display='';
+  // Populate category dropdown
+  const sel=document.getElementById('edit-cat');
+  sel.innerHTML=CATS.map(c=>`<option value="${c.id}" ${c.id===s.c?'selected':''}>${c.name}</option>`).join('');
+  openModal('edit-modal');
+}
+function openAddSymbol(){
+  editingIdx=-1;pendingImg=null;
+  document.getElementById('edit-title').textContent='Add New Symbol';
+  document.getElementById('edit-word').value='';
+  document.getElementById('edit-emoji').value='';
+  document.getElementById('edit-image').value='';
+  document.getElementById('edit-preview').innerHTML='';
+  document.getElementById('edit-del-btn').style.display='none';
+  const sel=document.getElementById('edit-cat');
+  sel.innerHTML=CATS.map(c=>`<option value="${c.id}" ${c.id===currentCat?'selected':''}>${c.name}</option>`).join('');
+  openModal('edit-modal');
+}
+function previewImg(input){
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    pendingImg=e.target.result;
+    document.getElementById('edit-preview').innerHTML=`<img src="${pendingImg}" style="max-width:80px;border-radius:8px">`;
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+function saveSymbol(){
+  const w=document.getElementById('edit-word').value.trim();
+  if(!w){alert('Please enter a word');return}
+  const e=document.getElementById('edit-emoji').value.trim();
+  const c=document.getElementById('edit-cat').value;
+  if(editingIdx>=0){
+    symbols[editingIdx].w=w;
+    symbols[editingIdx].e=e;
+    symbols[editingIdx].c=c;
+    if(pendingImg)symbols[editingIdx].img=pendingImg;
+  }else{
+    symbols.push({w,e,c,id:symbols.length,img:pendingImg||null,fav:false});
+  }
+  saveState();closeModal('edit-modal');
+  if(currentCat)openCat(currentCat);else goHome();
+}
+function deleteSymbol(){
+  if(editingIdx<0)return;
+  if(!confirm('Delete "'+symbols[editingIdx].w+'"?'))return;
+  symbols.splice(editingIdx,1);
+  saveState();closeModal('edit-modal');
+  if(currentCat)openCat(currentCat);else goHome();
+}
+
+// ===== LONG PRESS FOR FAVORITE =====
+let lpTimer=null;
+document.addEventListener('pointerdown',e=>{
+  const cell=e.target.closest('.sym-cell');
+  if(!cell||editMode)return;
+  const idx=+cell.id.replace('sym-','');
+  lpTimer=setTimeout(()=>{
+    const s=symbols[idx];if(!s)return;
+    s.fav=!s.fav;
+    saveState();
+    const favEl=cell.querySelector('.sc-fav');
+    if(s.fav){
+      if(!favEl){const d=document.createElement('div');d.className='sc-fav';d.textContent='⭐';cell.appendChild(d)}
+      if(navigator.vibrate)navigator.vibrate(50);
+    }else{if(favEl)favEl.remove()}
+  },600);
+});
+document.addEventListener('pointerup',()=>clearTimeout(lpTimer));
+document.addEventListener('pointercancel',()=>clearTimeout(lpTimer));
+
+// ===== EXPORT / IMPORT =====
+function exportData(){
+  const blob=new Blob([JSON.stringify({symbols,recents,favorites,gridSize,pin,voiceUri,speechRate,speechPitch,theme},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mybuddy-board.json';a.click();
+}
+function importData(input){
+  if(!input.files||!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(d.symbols){symbols=d.symbols;recents=d.recents||[];favorites=d.favorites||[];
+        gridSize=d.gridSize||4;pin=d.pin||'1234';voiceUri=d.voiceUri||'';
+        speechRate=d.speechRate||0.9;speechPitch=d.speechPitch||1;theme=d.theme||'light';
+        saveState();setTheme(theme);goHome();alert('Board imported!')}
+    }catch(err){alert('Invalid file')}
+  };
+  reader.readAsText(input.files[0]);
+}
+
+// ===== MODALS =====
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+// ===== INIT =====
+function init(){
+  loadState();
+  setTheme(theme);
+  goHome();
+  // Dismiss splash
+  setTimeout(()=>{document.getElementById('splash').classList.add('gone');setTimeout(()=>document.getElementById('splash').remove(),600)},1500);
+  // Pre-load voices
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+}
+init();
+</script></body></html>
